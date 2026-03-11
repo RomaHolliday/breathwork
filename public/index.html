@@ -9,21 +9,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b1510;
-    --surface: #121e17;
-    --mist: #192618;
-    --sage: #6b9e77;
-    --dew: #a8c9b0;
-    --stone: #7a9480;
-    --moon: #eaefeb;
-    --gold: #c9a85c;
-    --gold-bright: #e8c478;
-    --text: #c0d8c4;
-    --text-dim: #4a6652;
+    --bg: #111009;
+    --surface: #1a1710;
+    --warm: #2a2418;
+    --amber: #c8913a;
+    --amber-bright: #e8b060;
+    --copper: #a06828;
+    --ash: #8a7e6e;
+    --cream: #ede8df;
+    --text: #c8bfaa;
+    --text-dim: #5a5040;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   html, body { height: 100%; }
 
   body {
@@ -40,13 +38,11 @@
     position: relative;
   }
 
-  /* Rich layered background */
   .bg-layer {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    overflow: hidden;
   }
 
   .bg-layer::before {
@@ -54,70 +50,61 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 100% 70% at 15% 100%, rgba(40,90,55,0.18) 0%, transparent 55%),
-      radial-gradient(ellipse 80% 50% at 85% 0%, rgba(80,130,90,0.1) 0%, transparent 50%),
-      radial-gradient(ellipse 60% 60% at 50% 40%, rgba(25,60,35,0.12) 0%, transparent 70%);
+      radial-gradient(ellipse 90% 60% at 10% 100%, rgba(100,60,10,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 5%, rgba(80,50,10,0.14) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(60,40,10,0.08) 0%, transparent 70%);
   }
 
-  /* Animated aurora bands */
-  .aurora {
-    position: absolute;
-    width: 200%;
-    height: 300px;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.06;
-    animation: aurora-drift ease-in-out infinite;
-  }
-
-  .aurora-1 {
-    background: radial-gradient(ellipse, #4a9e60 0%, transparent 70%);
-    top: 10%;
-    left: -50%;
-    animation-duration: 25s;
-    animation-delay: 0s;
-  }
-
-  .aurora-2 {
-    background: radial-gradient(ellipse, #c9a85c 0%, transparent 70%);
-    top: 30%;
-    left: -20%;
-    height: 200px;
-    opacity: 0.04;
-    animation-duration: 32s;
-    animation-delay: -10s;
-  }
-
-  .aurora-3 {
-    background: radial-gradient(ellipse, #3a7a50 0%, transparent 70%);
-    top: 60%;
-    left: -30%;
-    animation-duration: 20s;
-    animation-delay: -5s;
-  }
-
-  @keyframes aurora-drift {
-    0% { transform: translateX(0) scaleY(1); }
-    50% { transform: translateX(30%) scaleY(1.3); }
-    100% { transform: translateX(0) scaleY(1); }
-  }
-
-  /* Floating mist orbs */
-  .mist-particle {
+  .ember {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(140,200,160,0.06) 0%, transparent 65%);
-    animation: mist-drift linear infinite;
+    filter: blur(80px);
+    animation: ember-breathe ease-in-out infinite;
   }
 
-  @keyframes mist-drift {
-    0%   { transform: translateY(110vh) scale(0.8); opacity: 0; }
+  .ember-1 {
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(180,100,20,0.12) 0%, transparent 70%);
+    bottom: -50px; left: -100px;
+    animation-duration: 18s;
+  }
+
+  .ember-2 {
+    width: 400px; height: 250px;
+    background: radial-gradient(ellipse, rgba(140,80,15,0.08) 0%, transparent 70%);
+    top: 10%; right: -80px;
+    animation-duration: 24s;
+    animation-delay: -8s;
+  }
+
+  .ember-3 {
+    width: 300px; height: 200px;
+    background: radial-gradient(ellipse, rgba(200,130,40,0.06) 0%, transparent 70%);
+    top: 40%; left: 20%;
+    animation-duration: 30s;
+    animation-delay: -14s;
+  }
+
+  @keyframes ember-breathe {
+    0%   { transform: scale(1) translateY(0); opacity: 0.7; }
+    50%  { transform: scale(1.15) translateY(-20px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 0.7; }
+  }
+
+  .ash-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,160,80,0.07) 0%, transparent 70%);
+    animation: ash-drift linear infinite;
+  }
+
+  @keyframes ash-drift {
+    0%   { transform: translateY(110vh) scale(0.7); opacity: 0; }
     8%   { opacity: 1; }
-    92%  { opacity: 0.6; }
-    100% { transform: translateY(-15vh) scale(1.3); opacity: 0; }
+    92%  { opacity: 0.5; }
+    100% { transform: translateY(-15vh) scale(1.2); opacity: 0; }
   }
 
-  /* Layout */
   .container {
     width: 100%;
     max-width: 640px;
@@ -126,18 +113,14 @@
     padding-top: 56px;
   }
 
-  /* Header */
-  header {
-    text-align: center;
-    margin-bottom: 64px;
-  }
+  header { text-align: center; margin-bottom: 64px; }
 
   .title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
     font-size: clamp(3rem, 10vw, 4.5rem);
     letter-spacing: 0.14em;
-    color: var(--moon);
+    color: var(--cream);
     line-height: 1;
     margin-bottom: 10px;
   }
@@ -153,9 +136,8 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1rem;
-    color: var(--stone);
+    color: var(--ash);
     margin-top: 14px;
-    letter-spacing: 0.04em;
   }
 
   .sync-status {
@@ -167,10 +149,9 @@
     height: 16px;
     transition: color 0.4s;
   }
-  .sync-status.saving { color: var(--sage); }
+  .sync-status.saving { color: var(--amber); }
   .sync-status.error  { color: #c97a6b; }
 
-  /* Section */
   .section { margin-bottom: 48px; }
 
   .section-label {
@@ -182,66 +163,57 @@
     text-align: center;
   }
 
-  /* Short orbs — centered row */
   .orb-row {
     display: flex;
     gap: clamp(12px, 4vw, 24px);
     justify-content: center;
-    flex-wrap: nowrap;
   }
 
   .orb {
-    width: clamp(60px, 15vw, 88px);
-    height: clamp(60px, 15vw, 88px);
+    width: clamp(62px, 15vw, 88px);
+    height: clamp(62px, 15vw, 88px);
     border-radius: 50%;
-    border: 1.5px solid rgba(107,158,119,0.25);
-    background: radial-gradient(circle at 35% 35%, rgba(30,50,35,0.9), rgba(18,30,23,0.95));
+    border: 1.5px solid rgba(200,145,58,0.2);
+    background: radial-gradient(circle at 35% 30%, #211d13, #15120b);
     cursor: pointer;
     position: relative;
     transition: border-color 0.3s ease, transform 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
     flex-shrink: 0;
     touch-action: manipulation;
   }
 
-  .orb:active { transform: scale(0.93); }
+  .orb:active { transform: scale(0.92); }
 
   .orb-face {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     border-radius: 50%;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
   }
 
   .orb-inner {
-    width: 36%;
-    height: 36%;
+    width: 36%; height: 36%;
     border-radius: 50%;
-    background: rgba(107,158,119,0.1);
-    border: 1px solid rgba(107,158,119,0.2);
+    background: rgba(200,145,58,0.08);
+    border: 1px solid rgba(200,145,58,0.18);
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    z-index: 1;
   }
 
   .orb.done {
-    border-color: rgba(107,158,119,0.65);
-    background: radial-gradient(circle at 35% 35%, rgba(40,75,50,0.95), rgba(20,38,28,0.98));
+    border-color: rgba(200,145,58,0.6);
+    background: radial-gradient(circle at 35% 30%, #2e2410, #1a1408);
   }
 
   .orb.done .orb-inner {
-    background: radial-gradient(circle at 30% 30%, #7db888, #3a6b45);
-    border-color: var(--sage);
-    box-shadow: 0 0 16px rgba(107,158,119,0.5), 0 0 40px rgba(107,158,119,0.2);
-    width: 52%;
-    height: 52%;
+    background: radial-gradient(circle at 30% 30%, #e8b060, #8a5018);
+    border-color: var(--amber);
+    box-shadow: 0 0 16px rgba(200,145,58,0.5), 0 0 40px rgba(200,145,58,0.2);
+    width: 52%; height: 52%;
   }
 
   .orb.done::after {
@@ -249,7 +221,7 @@
     position: absolute;
     inset: -8px;
     border-radius: 50%;
-    border: 1px solid rgba(107,158,119,0.18);
+    border: 1px solid rgba(200,145,58,0.15);
     animation: pulse-ring 2.8s ease infinite;
   }
 
@@ -259,7 +231,6 @@
     100% { transform: scale(0.88); opacity: 0.9; }
   }
 
-  /* Burst */
   .burst {
     position: absolute;
     inset: 0;
@@ -278,26 +249,23 @@
   }
 
   .orb.bursting .burst::before {
-    background: radial-gradient(circle, rgba(168,210,176,0.5) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(232,176,96,0.55) 0%, transparent 65%);
     animation: burst-1 0.7s ease-out forwards;
   }
-
   .orb.bursting .burst::after {
-    background: radial-gradient(circle, rgba(107,158,119,0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(200,145,58,0.3) 0%, transparent 70%);
     animation: burst-2 0.9s ease-out 0.05s forwards;
   }
 
   @keyframes burst-1 {
     0%   { transform: scale(0.5); opacity: 0.9; }
-    100% { transform: scale(3); opacity: 0; }
+    100% { transform: scale(3.2); opacity: 0; }
   }
-
   @keyframes burst-2 {
     0%   { transform: scale(0.5); opacity: 0.7; }
-    100% { transform: scale(2.2); opacity: 0; }
+    100% { transform: scale(2.4); opacity: 0; }
   }
 
-  /* Long orb */
   .long-breath-wrap {
     display: flex;
     flex-direction: column;
@@ -306,11 +274,11 @@
   }
 
   .long-orb {
-    width: clamp(150px, 40vw, 200px);
-    height: clamp(150px, 40vw, 200px);
+    width: clamp(160px, 42vw, 210px);
+    height: clamp(160px, 42vw, 210px);
     border-radius: 50%;
-    border: 1.5px solid rgba(201,168,92,0.25);
-    background: radial-gradient(circle at 35% 35%, rgba(45,38,20,0.95), rgba(18,15,8,0.98));
+    border: 1.5px solid rgba(200,145,58,0.2);
+    background: radial-gradient(circle at 35% 30%, #221c0e, #131009);
     cursor: pointer;
     position: relative;
     display: flex;
@@ -324,8 +292,7 @@
   .long-orb:active { transform: scale(0.95); }
 
   .long-orb-face {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     border-radius: 50%;
     overflow: hidden;
     display: flex;
@@ -334,72 +301,54 @@
   }
 
   .long-orb-inner {
-    width: 38%;
-    height: 38%;
+    width: 38%; height: 38%;
     border-radius: 50%;
-    background: rgba(201,168,92,0.07);
-    border: 1px solid rgba(201,168,92,0.18);
+    background: rgba(200,145,58,0.07);
+    border: 1px solid rgba(200,145,58,0.18);
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    z-index: 1;
   }
 
   .long-orb-inner svg {
-    width: 40%;
-    height: 40%;
+    width: 40%; height: 40%;
     opacity: 0.35;
     transition: opacity 0.5s;
-    color: var(--gold);
+    color: var(--amber);
   }
 
   .long-orb.done {
-    border-color: rgba(201,168,92,0.65);
-    background: radial-gradient(circle at 35% 35%, rgba(60,48,20,0.98), rgba(25,18,5,0.99));
+    border-color: rgba(200,145,58,0.65);
+    background: radial-gradient(circle at 35% 30%, #2e2410, #181208);
   }
 
   .long-orb.done .long-orb-inner {
-    background: radial-gradient(circle at 30% 30%, #e8c878, #9a7030);
-    border-color: var(--gold-bright);
-    box-shadow: 0 0 28px rgba(201,168,92,0.6), 0 0 70px rgba(201,168,92,0.25);
-    width: 55%;
-    height: 55%;
+    background: radial-gradient(circle at 30% 30%, #f0c070, #8a5018);
+    border-color: var(--amber-bright);
+    box-shadow: 0 0 30px rgba(200,145,58,0.65), 0 0 80px rgba(200,145,58,0.25);
+    width: 55%; height: 55%;
   }
 
-  .long-orb.done .long-orb-inner svg { opacity: 1; color: #fff8e0; }
+  .long-orb.done .long-orb-inner svg { opacity: 1; color: #fff3d0; }
 
   .long-orb.done::after {
     content: '';
     position: absolute;
-    inset: -12px;
+    inset: -14px;
     border-radius: 50%;
-    border: 1px solid rgba(201,168,92,0.2);
-    animation: pulse-ring-gold 3.2s ease infinite;
-  }
-
-  @keyframes pulse-ring-gold {
-    0%   { transform: scale(0.9); opacity: 0.9; }
-    50%  { transform: scale(1.06); opacity: 0.15; }
-    100% { transform: scale(0.9); opacity: 0.9; }
+    border: 1px solid rgba(200,145,58,0.18);
+    animation: pulse-ring 3.2s ease infinite;
   }
 
   .long-orb .burst::before {
-    background: radial-gradient(circle, rgba(240,208,128,0.5) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(240,192,112,0.55) 0%, transparent 65%);
   }
-
   .long-orb .burst::after {
-    background: radial-gradient(circle, rgba(201,168,92,0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(200,145,58,0.3) 0%, transparent 70%);
   }
-
-  .long-orb.bursting .burst::before {
-    animation: burst-1 0.9s ease-out forwards;
-  }
-
-  .long-orb.bursting .burst::after {
-    animation: burst-2 1.1s ease-out 0.06s forwards;
-  }
+  .long-orb.bursting .burst::before { animation: burst-1 0.9s ease-out forwards; }
+  .long-orb.bursting .burst::after  { animation: burst-2 1.1s ease-out 0.06s forwards; }
 
   .long-label { text-align: center; }
 
@@ -407,31 +356,29 @@
     font-size: 0.62rem;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: rgba(201,168,92,0.55);
+    color: rgba(200,145,58,0.5);
   }
 
   .long-label .name {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1.2rem;
-    color: rgba(201,168,92,0.75);
+    color: rgba(200,145,58,0.72);
     margin-top: 4px;
   }
 
-  /* Divider */
   .divider {
     width: 100%;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(107,158,119,0.12), transparent);
+    background: linear-gradient(to right, transparent, rgba(200,145,58,0.1), transparent);
     margin: 12px 0 40px;
   }
 
-  /* Summary */
   .summary {
     text-align: center;
     padding: 24px 20px;
-    background: rgba(20,35,25,0.5);
-    border: 1px solid rgba(107,158,119,0.1);
+    background: rgba(26,20,10,0.6);
+    border: 1px solid rgba(200,145,58,0.1);
     border-radius: 6px;
     backdrop-filter: blur(8px);
   }
@@ -440,28 +387,26 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1.05rem;
-    color: var(--stone);
+    color: var(--ash);
     line-height: 1.9;
   }
 
-  .summary-line span { color: var(--dew); font-style: normal; }
+  .summary-line span { color: var(--cream); font-style: normal; }
 
   .complete-msg {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1.4rem;
-    color: var(--moon);
+    color: var(--cream);
     margin-top: 10px;
     opacity: 0;
     transition: opacity 1s ease;
   }
-
   .complete-msg.show { opacity: 1; }
 
-  /* Undo */
   .undo-btn {
     background: none;
-    border: 1px solid rgba(107,158,119,0.18);
+    border: 1px solid rgba(200,145,58,0.15);
     color: var(--text-dim);
     font-family: 'Karla', sans-serif;
     font-size: 0.62rem;
@@ -477,8 +422,7 @@
     margin-right: auto;
     touch-action: manipulation;
   }
-
-  .undo-btn:active { opacity: 0.7; }
+  .undo-btn:hover { border-color: rgba(200,145,58,0.3); color: var(--ash); }
 
   .reset-note {
     text-align: center;
@@ -490,10 +434,9 @@
     opacity: 0.6;
   }
 
-  /* History */
   .history-section {
     margin-top: 56px;
-    border-top: 1px solid rgba(107,158,119,0.08);
+    border-top: 1px solid rgba(200,145,58,0.07);
     padding-top: 36px;
   }
 
@@ -511,16 +454,15 @@
     align-items: center;
     justify-content: space-between;
     padding: 13px 0;
-    border-bottom: 1px solid rgba(107,158,119,0.06);
+    border-bottom: 1px solid rgba(200,145,58,0.05);
   }
-
   .history-row:last-child { border-bottom: none; }
 
   .history-date {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1rem;
-    color: var(--stone);
+    color: var(--ash);
   }
 
   .history-pills { display: flex; gap: 8px; align-items: center; }
@@ -534,27 +476,24 @@
   }
 
   .pill-short {
-    background: rgba(107,158,119,0.14);
-    color: var(--sage);
-    border: 1px solid rgba(107,158,119,0.22);
+    background: rgba(200,145,58,0.12);
+    color: var(--amber);
+    border: 1px solid rgba(200,145,58,0.2);
   }
-
   .pill-short.incomplete {
-    background: rgba(107,158,119,0.04);
+    background: rgba(200,145,58,0.04);
     color: var(--text-dim);
-    border-color: rgba(107,158,119,0.08);
+    border-color: rgba(200,145,58,0.08);
   }
-
   .pill-long {
-    background: rgba(201,168,92,0.12);
-    color: var(--gold);
-    border: 1px solid rgba(201,168,92,0.22);
+    background: rgba(200,145,58,0.12);
+    color: var(--amber-bright);
+    border: 1px solid rgba(200,145,58,0.2);
   }
-
   .pill-long.incomplete {
-    background: rgba(201,168,92,0.03);
+    background: rgba(200,145,58,0.03);
     color: var(--text-dim);
-    border-color: rgba(201,168,92,0.08);
+    border-color: rgba(200,145,58,0.07);
   }
 
   .history-empty {
@@ -570,10 +509,10 @@
 <body>
 
 <div class="bg-layer">
-  <div class="aurora aurora-1"></div>
-  <div class="aurora aurora-2"></div>
-  <div class="aurora aurora-3"></div>
-  <div id="mist-layer"></div>
+  <div class="ember ember-1"></div>
+  <div class="ember ember-2"></div>
+  <div class="ember ember-3"></div>
+  <div id="ash-layer"></div>
 </div>
 
 <div class="container">
@@ -584,7 +523,6 @@
     <div class="sync-status" id="sync-status"></div>
   </header>
 
-  <!-- Short breaths -->
   <div class="section">
     <div class="section-label">2-minute breaths &mdash; <span id="short-count">0</span> of 5</div>
     <div class="orb-row" id="short-orbs"></div>
@@ -592,7 +530,6 @@
 
   <div class="divider"></div>
 
-  <!-- Long breath -->
   <div class="section">
     <div class="section-label">Extended breath</div>
     <div class="long-breath-wrap">
@@ -613,7 +550,6 @@
     </div>
   </div>
 
-  <!-- Summary -->
   <div class="summary">
     <div class="summary-line">
       <span id="short-done">0</span> of 5 short &nbsp;&bull;&nbsp; long breath <span id="long-status">remaining</span>
@@ -624,7 +560,6 @@
   <button class="undo-btn" onclick="undoLast()">undo last</button>
   <div class="reset-note">Resets at midnight</div>
 
-  <!-- History -->
   <div class="history-section">
     <div class="history-title">Past days</div>
     <div id="history-list"><div class="history-empty">Loading…</div></div>
@@ -632,14 +567,13 @@
 </div>
 
 <script>
-  // Mist particles
-  const mistLayer = document.getElementById('mist-layer');
-  for (let i = 0; i < 8; i++) {
+  const ashLayer = document.getElementById('ash-layer');
+  for (let i = 0; i < 7; i++) {
     const p = document.createElement('div');
-    p.className = 'mist-particle';
-    const size = 200 + Math.random() * 300;
-    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*110-5}vw;animation-duration:${22+Math.random()*25}s;animation-delay:${-Math.random()*30}s`;
-    mistLayer.appendChild(p);
+    p.className = 'ash-particle';
+    const size = 180 + Math.random() * 280;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*110-5}vw;animation-duration:${24+Math.random()*28}s;animation-delay:${-Math.random()*32}s`;
+    ashLayer.appendChild(p);
   }
 
   function todayStr() {

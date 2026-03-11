@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breathwork</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Karla:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1a14;
+    --surface: #162019;
+    --mist: #1e2d22;
+    --leaf: #3a6b45;
+    --sage: #6b9e77;
+    --dew: #a8c9b0;
+    --stone: #8a9e8e;
+    --moon: #e8ede9;
+    --long-gold: #c9a85c;
+    --long-glow: #f0d080;
+    --text: #c8daca;
+    --text-dim: #5a7060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Karla', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px 80px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(58,107,69,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(107,158,119,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(168,201,176,0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .mist-particle {
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,201,176,0.04) 0%, transparent 70%);
+    animation: drift linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes drift {
+    0% { transform: translateY(100vh) translateX(0) scale(0.8); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-20vh) translateX(30px) scale(1.2); opacity: 0; }
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.4rem, 6vw, 3.2rem);
+    letter-spacing: 0.12em;
+    color: var(--moon);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .date-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--stone);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Sync status */
+  .sync-status {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 6px;
+    height: 14px;
+    transition: color 0.3s;
+  }
+  .sync-status.saving { color: var(--sage); }
+  .sync-status.error { color: #c97a6b; }
+
+  .section { margin-bottom: 36px; }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    padding-left: 2px;
+  }
+
+  .orb-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .orb {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(107,158,119,0.3);
+    background: var(--surface);
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .orb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(107,158,119,0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .orb:hover::before { opacity: 1; }
+
+  .orb-inner {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(107,158,119,0.12);
+    border: 1px solid rgba(107,158,119,0.25);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .orb.done {
+    border-color: rgba(107,158,119,0.7);
+    background: var(--mist);
+  }
+
+  .orb.done .orb-inner {
+    background: radial-gradient(circle at 35% 35%, #6b9e77, #3a6b45);
+    border-color: var(--sage);
+    box-shadow: 0 0 12px rgba(107,158,119,0.4), 0 0 30px rgba(107,158,119,0.15);
+    width: 36px;
+    height: 36px;
+  }
+
+  .orb.done::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgba(107,158,119,0.15);
+    animation: pulse-ring 2.5s ease infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 0.3; }
+    100% { transform: scale(0.9); opacity: 0.8; }
+  }
+
+  .orb .burst {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,201,176,0.3) 0%, transparent 70%);
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .orb.bursting .burst {
+    animation: burst-out 0.6s ease-out forwards;
+  }
+
+  @keyframes burst-out {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .long-breath-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .long-orb {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,168,92,0.3);
+    background: var(--surface);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.4s ease;
+  }
+
+  .long-orb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(201,168,92,0.08) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .long-orb:hover::before { opacity: 1; }
+
+  .long-orb-inner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(201,168,92,0.08);
+    border: 1px solid rgba(201,168,92,0.2);
+    transition: all 0.5s ease;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .long-orb-inner svg {
+    width: 22px;
+    height: 22px;
+    opacity: 0.4;
+    transition: opacity 0.4s;
+  }
+
+  .long-orb.done { border-color: rgba(201,168,92,0.7); }
+
+  .long-orb.done .long-orb-inner {
+    background: radial-gradient(circle at 35% 35%, #d4a84e, #9a7030);
+    border-color: var(--long-gold);
+    box-shadow: 0 0 20px rgba(201,168,92,0.5), 0 0 50px rgba(201,168,92,0.2);
+    width: 72px;
+    height: 72px;
+  }
+
+  .long-orb.done .long-orb-inner svg { opacity: 0.9; }
+
+  .long-orb.done::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,92,0.2);
+    animation: pulse-ring-gold 3s ease infinite;
+  }
+
+  @keyframes pulse-ring-gold {
+    0% { transform: scale(0.92); opacity: 0.8; }
+    50% { transform: scale(1.04); opacity: 0.2; }
+    100% { transform: scale(0.92); opacity: 0.8; }
+  }
+
+  .long-orb .burst {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(240,208,128,0.3) 0%, transparent 70%);
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .long-orb.bursting .burst {
+    animation: burst-out 0.8s ease-out forwards;
+  }
+
+  .long-label { text-align: center; }
+
+  .long-label .duration {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(201,168,92,0.6);
+  }
+
+  .long-label .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: rgba(201,168,92,0.8);
+    margin-top: 2px;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(107,158,119,0.15), transparent);
+    margin: 8px 0 32px;
+  }
+
+  .summary {
+    text-align: center;
+    padding: 20px;
+    background: rgba(30,45,34,0.4);
+    border: 1px solid rgba(107,158,119,0.1);
+    border-radius: 4px;
+    margin-top: 12px;
+  }
+
+  .summary-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--stone);
+    line-height: 1.8;
+  }
+
+  .summary-line span {
+    color: var(--dew);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .complete-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--moon);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .complete-msg.show { opacity: 1; }
+
+  .undo-btn {
+    background: none;
+    border: 1px solid rgba(107,158,119,0.2);
+    color: var(--text-dim);
+    font-family: 'Karla', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    margin-top: 20px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .undo-btn:hover {
+    border-color: rgba(107,158,119,0.4);
+    color: var(--stone);
+  }
+
+  .reset-note {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* History */
+  .history-section {
+    margin-top: 48px;
+    border-top: 1px solid rgba(107,158,119,0.1);
+    padding-top: 32px;
+  }
+
+  .history-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .history-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(107,158,119,0.07);
+  }
+
+  .history-row:last-child { border-bottom: none; }
+
+  .history-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--stone);
+    min-width: 140px;
+  }
+
+  .history-pills {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .pill {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .pill-short {
+    background: rgba(107,158,119,0.15);
+    color: var(--sage);
+    border: 1px solid rgba(107,158,119,0.25);
+  }
+
+  .pill-short.incomplete {
+    background: rgba(107,158,119,0.05);
+    color: var(--text-dim);
+    border-color: rgba(107,158,119,0.1);
+  }
+
+  .pill-long {
+    background: rgba(201,168,92,0.12);
+    color: var(--long-gold);
+    border: 1px solid rgba(201,168,92,0.25);
+  }
+
+  .pill-long.incomplete {
+    background: rgba(201,168,92,0.04);
+    color: var(--text-dim);
+    border-color: rgba(201,168,92,0.1);
+  }
+
+  .history-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .orb-outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="mist-layer"></div>
+
+<div class="container">
+  <header>
+    <div class="title">Breathwork</div>
+    <div class="subtitle">Daily practice</div>
+    <div class="date-display" id="date-display"></div>
+    <div class="sync-status" id="sync-status"></div>
+  </header>
+
+  <div class="section">
+    <div class="section-label">2-minute breaths &mdash; <span id="short-count">0</span> of 5</div>
+    <div class="orb-row" id="short-orbs"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Extended breath</div>
+    <div class="long-breath-wrap">
+      <div class="long-orb" id="long-orb" onclick="clickLong()">
+        <div class="burst"></div>
+        <div class="long-orb-inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M12 2C12 2 4 8 4 13a8 8 0 0 0 16 0c0-5-8-11-8-11z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="long-label">
+        <div class="duration">10 minutes</div>
+        <div class="name">Deep stillness</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-line">
+      <span id="short-done">0</span> of 5 short &nbsp;&bull;&nbsp; long breath <span id="long-status">remaining</span>
+    </div>
+    <div class="complete-msg" id="complete-msg">Today's practice is complete ✦</div>
+  </div>
+
+  <button class="undo-btn" onclick="undoLast()">undo last</button>
+  <div class="reset-note">Resets at midnight</div>
+
+  <div class="history-section">
+    <div class="history-title">Past days</div>
+    <div id="history-list"><div class="history-empty">Loading…</div></div>
+  </div>
+</div>
+
+<script>
+  // Mist particles
+  const mistLayer = document.getElementById('mist-layer');
+  for (let i = 0; i < 6; i++) {
+    const p = document.createElement('div');
+    p.className = 'mist-particle';
+    const size = 150 + Math.random() * 200;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}vw;animation-duration:${18+Math.random()*20}s;animation-delay:${-Math.random()*20}s`;
+    mistLayer.appendChild(p);
+  }
+
+  // Today's date string YYYY-MM-DD in local time
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  const dateEl = document.getElementById('date-display');
+  dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  let state = { short_count: 0, long_done: false };
+  let saving = false;
+
+  function setSyncStatus(msg, cls = '') {
+    const el = document.getElementById('sync-status');
+    el.textContent = msg;
+    el.className = 'sync-status ' + cls;
+  }
+
+  // Load today + history from server
+  async function loadAll() {
+    try {
+      const res = await fetch('/api/logs');
+      const logs = await res.json();
+      const today = todayStr();
+      const todayLog = logs.find(l => l.date === today);
+      if (todayLog) {
+        state.short_count = todayLog.short_count;
+        state.long_done = todayLog.long_done;
+      }
+      buildOrbs();
+      updateUI();
+      renderHistory(logs.filter(l => l.date !== today));
+    } catch(e) {
+      setSyncStatus('offline — changes may not save', 'error');
+      buildOrbs();
+      updateUI();
+      renderHistory([]);
+    }
+  }
+
+  // Save to server
+  async function saveState() {
+    setSyncStatus('saving…', 'saving');
+    try {
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: todayStr(), ...state })
+      });
+      setSyncStatus('saved', 'saving');
+      setTimeout(() => setSyncStatus(''), 1500);
+    } catch(e) {
+      setSyncStatus('save failed', 'error');
+    }
+  }
+
+  function buildOrbs() {
+    const container = document.getElementById('short-orbs');
+    container.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const outer = document.createElement('div');
+      outer.className = 'orb-outer';
+      const orb = document.createElement('div');
+      orb.className = 'orb' + (i < state.short_count ? ' done' : '');
+      orb.id = `orb-${i}`;
+      orb.innerHTML = `<div class="burst"></div><div class="orb-inner"></div>`;
+      orb.onclick = () => clickShort(i);
+      outer.appendChild(orb);
+      container.appendChild(outer);
+    }
+  }
+
+  function clickShort(i) {
+    if (i === state.short_count) {
+      state.short_count++;
+      saveState();
+      const orb = document.getElementById(`orb-${i}`);
+      orb.classList.add('bursting');
+      setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 600);
+      updateUI();
+    }
+  }
+
+  function clickLong() {
+    if (state.long_done) return;
+    state.long_done = true;
+    saveState();
+    const orb = document.getElementById('long-orb');
+    orb.classList.add('bursting');
+    setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 800);
+    updateUI();
+  }
+
+  function undoLast() {
+    if (state.long_done) {
+      state.long_done = false;
+    } else if (state.short_count > 0) {
+      state.short_count--;
+    }
+    saveState();
+    buildOrbs();
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('short-count').textContent = state.short_count;
+    document.getElementById('short-done').textContent = state.short_count;
+    document.getElementById('long-status').textContent = state.long_done ? 'complete' : 'remaining';
+    document.getElementById('complete-msg').classList.toggle('show', state.short_count >= 5 && state.long_done);
+    document.getElementById('long-orb').classList.toggle('done', state.long_done);
+  }
+
+  function renderHistory(logs) {
+    const list = document.getElementById('history-list');
+    if (!logs || logs.length === 0) {
+      list.innerHTML = '<div class="history-empty">No past sessions yet</div>';
+      return;
+    }
+    list.innerHTML = logs.map(log => {
+      const d = new Date(log.date + 'T12:00:00'); // noon to avoid timezone edge cases
+      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const shortDone = log.short_count >= 5;
+      const longDone = log.long_done;
+      return `
+        <div class="history-row">
+          <div class="history-date">${label}</div>
+          <div class="history-pills">
+            <span class="pill pill-short ${shortDone ? '' : 'incomplete'}">${log.short_count}/5 short</span>
+            <span class="pill pill-long ${longDone ? '' : 'incomplete'}">${longDone ? '10 min ✓' : '10 min —'}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  loadAll();
+</script>
+</body>
+</html>

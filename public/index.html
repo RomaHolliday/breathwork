@@ -125,16 +125,16 @@
 
   .sync-status {
     font-family: 'Oswald', sans-serif;
-    font-size: 0.5rem;
+    font-size: 0.6rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
     margin-top: 2px;
-    height: 12px;
+    height: 16px;
     transition: color 0.3s;
   }
-  .sync-status.saving { color: #f5c800; }
-  .sync-status.error  { color: #ff6666; }
+  .sync-status.saving { color: #f5c800; font-weight: 600; }
+  .sync-status.error  { color: #ff6666; font-weight: 600; }
 
   /* ===== COMIC PANELS ===== */
   .panel {
@@ -598,7 +598,6 @@
       <div class="masthead-meta">
         <div class="issue-num" id="issue-num">#001</div>
         <div class="masthead-date" id="date-display"></div>
-        <div class="sync-status" id="sync-status"></div>
       </div>
     </div>
   </div>
@@ -617,7 +616,7 @@
     <div class="panel-caption red">Soul Stone &mdash; 10 minutes</div>
     <div class="soul-panel-body" style="position:relative;">
       <div class="speed-lines"></div>
-      <div class="soul-stone" id="long-orb" onclick="clickLong()">
+      <div class="soul-stone" id="long-orb" onclick="clickLong()" ontouchend="event.preventDefault();clickLong()">
         <div class="soul-burst"></div>
         <svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <polygon class="gem-bottom" points="50,95 10,60 90,60"/>
@@ -686,11 +685,7 @@
 
   let state = { short_count: 0, long_done: false };
 
-  function setSyncStatus(msg, cls = '') {
-    const el = document.getElementById('sync-status');
-    el.textContent = msg;
-    el.className = 'sync-status ' + cls;
-  }
+  function setSyncStatus(msg, cls) {}  // silent
 
   async function loadAll() {
     try {
@@ -758,7 +753,8 @@
       stone.id = `stone-${i}`;
       stone.dataset.color = STONE_COLORS[i];
       stone.innerHTML = `<div class="stone-burst"></div>${gemSVG(STONE_COLORS[i])}`;
-      stone.onclick = () => clickStone(i);
+      stone.addEventListener('click', () => clickStone(i));
+      stone.addEventListener('touchend', (e) => { e.preventDefault(); clickStone(i); });
 
       const label = document.createElement('div');
       label.className = 'stone-name';

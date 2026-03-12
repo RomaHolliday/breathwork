@@ -344,6 +344,13 @@
   @keyframes gem-burst  { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
   @keyframes gem-burst2 { 0% { transform: scale(0.2); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
 
+  @keyframes gauntlet-flash {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    50%  { opacity: 0.7; }
+    100% { opacity: 0; }
+  }
+
   .stone-name {
     font-family: 'Oswald', sans-serif;
     font-size: 0.45rem;
@@ -907,6 +914,19 @@
     orb.classList.add('bursting');
     setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 950);
     updateUI();
+    // Gauntlet complete — full screen flash
+    setTimeout(() => gauntletFlash(), 400);
+  }
+
+  function gauntletFlash() {
+    const flash = document.createElement('div');
+    flash.style.cssText = `
+      position:fixed; inset:0; z-index:9999; pointer-events:none;
+      background: radial-gradient(ellipse at 50% 50%, rgba(255,200,100,0.95) 0%, rgba(232,96,16,0.85) 35%, rgba(150,40,0,0.6) 65%, transparent 100%);
+      animation: gauntlet-flash 1.4s ease-out forwards;
+    `;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 1500);
   }
 
   function undoLast() {

@@ -5,575 +5,675 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Breathwork</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0a0a">
+<title>The Gauntlet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Oswald:wght@400;600&family=Karla:wght@300;400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #111009;
-    --surface: #1a1710;
-    --warm: #2a2418;
-    --amber: #c8913a;
-    --amber-bright: #e8b060;
-    --copper: #a06828;
-    --ash: #8a7e6e;
-    --cream: #ede8df;
-    --text: #c8bfaa;
-    --text-dim: #5a5040;
+    --bg: #0e0e0e;
+    --panel: #141414;
+    --panel-border: #2a2a2a;
+    --ink: #111;
+    --cream: #f5f0e8;
+    --halftone: rgba(0,0,0,0.06);
+
+    /* Canon stone colors */
+    --space:   #1a4aff;   /* Space Stone - blue */
+    --mind:    #f5c800;   /* Mind Stone - yellow */
+    --reality: #cc1a1a;   /* Reality Stone - red */
+    --power:   #9b30d4;   /* Power Stone - purple */
+    --time:    #18a050;   /* Time Stone - green */
+    --soul:    #e86010;   /* Soul Stone - orange */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: #0a0a0a;
+    color: var(--cream);
     font-family: 'Karla', sans-serif;
-    font-weight: 300;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 24px 80px;
+    min-height: 100dvh;
     overflow-x: hidden;
     position: relative;
   }
 
-  .bg-layer {
+  /* ===== HALFTONE TEXTURE ===== */
+  body::before {
+    content: '';
     position: fixed;
     inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 6px 6px;
     pointer-events: none;
     z-index: 0;
   }
 
-  .bg-layer::before {
+  /* ===== COMIC PAGE LAYOUT ===== */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 12px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ===== MASTHEAD ===== */
+  .masthead {
+    background: #cc1a1a;
+    border: 3px solid #111;
+    padding: 10px 16px 8px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .masthead::before {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(ellipse 90% 60% at 10% 100%, rgba(100,60,10,0.22) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 90% 5%, rgba(80,50,10,0.14) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(60,40,10,0.08) 0%, transparent 70%);
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 4px,
+      rgba(0,0,0,0.08) 4px,
+      rgba(0,0,0,0.08) 8px
+    );
   }
 
-  .ember {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    animation: ember-breathe ease-in-out infinite;
-  }
-
-  .ember-1 {
-    width: 500px; height: 300px;
-    background: radial-gradient(ellipse, rgba(180,100,20,0.12) 0%, transparent 70%);
-    bottom: -50px; left: -100px;
-    animation-duration: 18s;
-  }
-
-  .ember-2 {
-    width: 400px; height: 250px;
-    background: radial-gradient(ellipse, rgba(140,80,15,0.08) 0%, transparent 70%);
-    top: 10%; right: -80px;
-    animation-duration: 24s;
-    animation-delay: -8s;
-  }
-
-  .ember-3 {
-    width: 300px; height: 200px;
-    background: radial-gradient(ellipse, rgba(200,130,40,0.06) 0%, transparent 70%);
-    top: 40%; left: 20%;
-    animation-duration: 30s;
-    animation-delay: -14s;
-  }
-
-  @keyframes ember-breathe {
-    0%   { transform: scale(1) translateY(0); opacity: 0.7; }
-    50%  { transform: scale(1.15) translateY(-20px); opacity: 1; }
-    100% { transform: scale(1) translateY(0); opacity: 0.7; }
-  }
-
-  .ash-particle {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(200,160,80,0.07) 0%, transparent 70%);
-    animation: ash-drift linear infinite;
-  }
-
-  @keyframes ash-drift {
-    0%   { transform: translateY(110vh) scale(0.7); opacity: 0; }
-    8%   { opacity: 1; }
-    92%  { opacity: 0.5; }
-    100% { transform: translateY(-15vh) scale(1.2); opacity: 0; }
-  }
-
-  .container {
-    width: 100%;
-    max-width: 640px;
+  .masthead-inner {
     position: relative;
     z-index: 1;
-    padding-top: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 
-  header { text-align: center; margin-bottom: 64px; }
-
-  .title {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(3rem, 10vw, 4.5rem);
-    letter-spacing: 0.14em;
-    color: var(--cream);
-    line-height: 1;
-    margin-bottom: 10px;
+  .comic-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    letter-spacing: 0.06em;
+    color: #fff;
+    line-height: 0.9;
+    text-shadow: 3px 3px 0 #800, 5px 5px 0 #111;
   }
 
-  .subtitle {
-    font-size: 0.68rem;
-    letter-spacing: 0.38em;
-    text-transform: uppercase;
-    color: var(--text-dim);
+  .masthead-meta {
+    text-align: right;
   }
 
-  .date-display {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+  .issue-num {
+    font-family: 'Bangers', cursive;
     font-size: 1rem;
-    color: var(--ash);
-    margin-top: 14px;
+    color: #f5c800;
+    letter-spacing: 0.1em;
+    text-shadow: 1px 1px 0 #111;
+  }
+
+  .masthead-date {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
   }
 
   .sync-status {
-    font-size: 0.58rem;
-    letter-spacing: 0.22em;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 8px;
-    height: 16px;
-    transition: color 0.4s;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+    height: 12px;
+    transition: color 0.3s;
   }
-  .sync-status.saving { color: var(--amber); }
-  .sync-status.error  { color: #c97a6b; }
+  .sync-status.saving { color: #f5c800; }
+  .sync-status.error  { color: #ff6666; }
 
-  .section { margin-bottom: 48px; }
-
-  .section-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.38em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 28px;
-    text-align: center;
-  }
-
-  .orb-row {
-    display: flex;
-    gap: clamp(12px, 4vw, 24px);
-    justify-content: center;
-  }
-
-  .orb {
-    width: clamp(62px, 15vw, 88px);
-    height: clamp(62px, 15vw, 88px);
-    border-radius: 50%;
-    border: 1.5px solid rgba(200,145,58,0.2);
-    background: radial-gradient(circle at 35% 30%, #211d13, #15120b);
-    cursor: pointer;
+  /* ===== COMIC PANELS ===== */
+  .panel {
+    border: 3px solid #111;
+    background: var(--panel);
     position: relative;
-    transition: border-color 0.3s ease, transform 0.15s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    touch-action: manipulation;
-  }
-
-  .orb:active { transform: scale(0.92); }
-
-  .orb-face {
-    width: 100%; height: 100%;
-    border-radius: 50%;
     overflow: hidden;
+  }
+
+  .panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 5px 5px;
+    pointer-events: none;
+  }
+
+  .panel-caption {
+    background: #f5c800;
+    color: #111;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-bottom: 2px solid #111;
+    display: inline-block;
+  }
+
+  .panel-caption.red {
+    background: #cc1a1a;
+    color: #fff;
+  }
+
+  /* ===== STONES PANEL ===== */
+  .stones-panel {
+    padding: 0;
+  }
+
+  .stones-panel-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 0;
+    border-bottom: 2px solid #111;
+  }
+
+  .stones-count {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: #f5c800;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    background: #111;
+  }
+
+  .stones-grid {
+    display: flex;
+    gap: 10px;
     justify-content: center;
+    padding: 20px 12px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(30,20,60,0.8) 0%, #141414 70%);
   }
 
-  .orb-inner {
-    width: 36%; height: 36%;
-    border-radius: 50%;
-    background: rgba(200,145,58,0.08);
-    border: 1px solid rgba(200,145,58,0.18);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .orb.done {
-    border-color: rgba(200,145,58,0.6);
-    background: radial-gradient(circle at 35% 30%, #2e2410, #1a1408);
-  }
-
-  .orb.done .orb-inner {
-    background: radial-gradient(circle at 30% 30%, #e8b060, #8a5018);
-    border-color: var(--amber);
-    box-shadow: 0 0 16px rgba(200,145,58,0.5), 0 0 40px rgba(200,145,58,0.2);
-    width: 52%; height: 52%;
-  }
-
-  .orb.done::after {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    border: 1px solid rgba(200,145,58,0.15);
-    animation: pulse-ring 2.8s ease infinite;
-  }
-
-  @keyframes pulse-ring {
-    0%   { transform: scale(0.88); opacity: 0.9; }
-    50%  { transform: scale(1.08); opacity: 0.2; }
-    100% { transform: scale(0.88); opacity: 0.9; }
-  }
-
-  .burst {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  .burst::before, .burst::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  .orb.bursting .burst::before {
-    background: radial-gradient(circle, rgba(232,176,96,0.55) 0%, transparent 65%);
-    animation: burst-1 0.7s ease-out forwards;
-  }
-  .orb.bursting .burst::after {
-    background: radial-gradient(circle, rgba(200,145,58,0.3) 0%, transparent 70%);
-    animation: burst-2 0.9s ease-out 0.05s forwards;
-  }
-
-  @keyframes burst-1 {
-    0%   { transform: scale(0.5); opacity: 0.9; }
-    100% { transform: scale(3.2); opacity: 0; }
-  }
-  @keyframes burst-2 {
-    0%   { transform: scale(0.5); opacity: 0.7; }
-    100% { transform: scale(2.4); opacity: 0; }
-  }
-
-  .long-breath-wrap {
+  /* ===== GEM SHAPE ===== */
+  .stone-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 6px;
   }
 
-  .long-orb {
-    width: clamp(160px, 42vw, 210px);
-    height: clamp(160px, 42vw, 210px);
-    border-radius: 50%;
-    border: 1.5px solid rgba(200,145,58,0.2);
-    background: radial-gradient(circle at 35% 30%, #221c0e, #131009);
-    cursor: pointer;
+  .stone {
+    width: clamp(52px, 13vw, 68px);
+    height: clamp(52px, 13vw, 68px);
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
-    transition: border-color 0.5s ease, transform 0.15s ease;
+    cursor: pointer;
     touch-action: manipulation;
+    transition: transform 0.1s ease;
   }
 
-  .long-orb:active { transform: scale(0.95); }
+  .stone:active { transform: scale(0.85); }
 
-  .long-orb-face {
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  /* SVG gem */
+  .stone svg.gem-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 0px transparent);
+    transition: filter 0.4s ease;
   }
 
-  .long-orb-inner {
-    width: 38%; height: 38%;
-    border-radius: 50%;
-    background: rgba(200,145,58,0.07);
-    border: 1px solid rgba(200,145,58,0.18);
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  /* Inactive gem faces */
+  .gem-top    { fill: rgba(255,255,255,0.06); }
+  .gem-left   { fill: rgba(0,0,0,0.3); }
+  .gem-right  { fill: rgba(0,0,0,0.5); }
+  .gem-bottom { fill: rgba(0,0,0,0.6); }
+  .gem-outline { fill: none; stroke: #333; stroke-width: 1.5; }
 
-  .long-orb-inner svg {
-    width: 40%; height: 40%;
-    opacity: 0.35;
-    transition: opacity 0.5s;
-    color: var(--amber);
-  }
+  /* Active colored gems */
+  .stone.done[data-color="space"] svg.gem-svg   { filter: drop-shadow(0 0 8px #1a4aff) drop-shadow(0 0 20px rgba(26,74,255,0.6)); }
+  .stone.done[data-color="mind"] svg.gem-svg    { filter: drop-shadow(0 0 8px #f5c800) drop-shadow(0 0 20px rgba(245,200,0,0.6)); }
+  .stone.done[data-color="reality"] svg.gem-svg { filter: drop-shadow(0 0 8px #cc1a1a) drop-shadow(0 0 20px rgba(204,26,26,0.6)); }
+  .stone.done[data-color="power"] svg.gem-svg   { filter: drop-shadow(0 0 8px #9b30d4) drop-shadow(0 0 20px rgba(155,48,212,0.6)); }
+  .stone.done[data-color="time"] svg.gem-svg    { filter: drop-shadow(0 0 8px #18a050) drop-shadow(0 0 20px rgba(24,160,80,0.6)); }
 
-  .long-orb.done {
-    border-color: rgba(200,145,58,0.65);
-    background: radial-gradient(circle at 35% 30%, #2e2410, #181208);
-  }
+  .stone.done[data-color="space"]   .gem-top    { fill: #4a7aff; }
+  .stone.done[data-color="space"]   .gem-left   { fill: #1a3acc; }
+  .stone.done[data-color="space"]   .gem-right  { fill: #0a1a88; }
+  .stone.done[data-color="space"]   .gem-bottom { fill: #060e55; }
+  .stone.done[data-color="space"]   .gem-shine  { fill: rgba(200,220,255,0.4); }
 
-  .long-orb.done .long-orb-inner {
-    background: radial-gradient(circle at 30% 30%, #f0c070, #8a5018);
-    border-color: var(--amber-bright);
-    box-shadow: 0 0 30px rgba(200,145,58,0.65), 0 0 80px rgba(200,145,58,0.25);
-    width: 55%; height: 55%;
-  }
+  .stone.done[data-color="mind"]    .gem-top    { fill: #ffe040; }
+  .stone.done[data-color="mind"]    .gem-left   { fill: #c8a000; }
+  .stone.done[data-color="mind"]    .gem-right  { fill: #886800; }
+  .stone.done[data-color="mind"]    .gem-bottom { fill: #553f00; }
+  .stone.done[data-color="mind"]    .gem-shine  { fill: rgba(255,255,200,0.5); }
 
-  .long-orb.done .long-orb-inner svg { opacity: 1; color: #fff3d0; }
+  .stone.done[data-color="reality"] .gem-top    { fill: #e84040; }
+  .stone.done[data-color="reality"] .gem-left   { fill: #aa1010; }
+  .stone.done[data-color="reality"] .gem-right  { fill: #770808; }
+  .stone.done[data-color="reality"] .gem-bottom { fill: #440404; }
+  .stone.done[data-color="reality"] .gem-shine  { fill: rgba(255,200,200,0.4); }
 
-  .long-orb.done::after {
+  .stone.done[data-color="power"]   .gem-top    { fill: #c060f0; }
+  .stone.done[data-color="power"]   .gem-left   { fill: #7820aa; }
+  .stone.done[data-color="power"]   .gem-right  { fill: #4e1277; }
+  .stone.done[data-color="power"]   .gem-bottom { fill: #2e0844; }
+  .stone.done[data-color="power"]   .gem-shine  { fill: rgba(220,180,255,0.4); }
+
+  .stone.done[data-color="time"]    .gem-top    { fill: #40d070; }
+  .stone.done[data-color="time"]    .gem-left   { fill: #108838; }
+  .stone.done[data-color="time"]    .gem-right  { fill: #085a22; }
+  .stone.done[data-color="time"]    .gem-bottom { fill: #043314; }
+  .stone.done[data-color="time"]    .gem-shine  { fill: rgba(180,255,210,0.4); }
+
+  .stone.done .gem-outline { stroke: rgba(255,255,255,0.3); }
+
+  /* Pulse on done */
+  .stone.done::after {
     content: '';
     position: absolute;
-    inset: -14px;
+    inset: -5px;
+    border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.2);
+    animation: stone-pulse 2.2s ease infinite;
+    pointer-events: none;
+  }
+
+  @keyframes stone-pulse {
+    0%   { transform: scale(0.9); opacity: 0.8; }
+    50%  { transform: scale(1.12); opacity: 0.15; }
+    100% { transform: scale(0.9); opacity: 0.8; }
+  }
+
+  /* Burst */
+  .stone-burst {
+    position: absolute;
+    inset: -24px;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  .stone-burst::before, .stone-burst::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     border-radius: 50%;
-    border: 1px solid rgba(200,145,58,0.18);
-    animation: pulse-ring 3.2s ease infinite;
+    opacity: 0;
+    transform: scale(0.2);
   }
 
-  .long-orb .burst::before {
-    background: radial-gradient(circle, rgba(240,192,112,0.55) 0%, transparent 65%);
-  }
-  .long-orb .burst::after {
-    background: radial-gradient(circle, rgba(200,145,58,0.3) 0%, transparent 70%);
-  }
-  .long-orb.bursting .burst::before { animation: burst-1 0.9s ease-out forwards; }
-  .long-orb.bursting .burst::after  { animation: burst-2 1.1s ease-out 0.06s forwards; }
+  .stone.bursting[data-color="space"]   .stone-burst::before { background: radial-gradient(circle, rgba(74,122,255,0.8) 0%, transparent 65%); animation: gem-burst 0.6s ease-out forwards; }
+  .stone.bursting[data-color="mind"]    .stone-burst::before { background: radial-gradient(circle, rgba(255,224,64,0.8) 0%, transparent 65%);  animation: gem-burst 0.6s ease-out forwards; }
+  .stone.bursting[data-color="reality"] .stone-burst::before { background: radial-gradient(circle, rgba(232,64,64,0.8) 0%, transparent 65%);   animation: gem-burst 0.6s ease-out forwards; }
+  .stone.bursting[data-color="power"]   .stone-burst::before { background: radial-gradient(circle, rgba(192,96,240,0.8) 0%, transparent 65%);  animation: gem-burst 0.6s ease-out forwards; }
+  .stone.bursting[data-color="time"]    .stone-burst::before { background: radial-gradient(circle, rgba(64,208,112,0.8) 0%, transparent 65%);  animation: gem-burst 0.6s ease-out forwards; }
 
-  .long-label { text-align: center; }
+  .stone.bursting .stone-burst::after {
+    background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
+    animation: gem-burst2 0.8s ease-out 0.04s forwards;
+  }
 
-  .long-label .duration {
-    font-size: 0.62rem;
-    letter-spacing: 0.32em;
+  @keyframes gem-burst  { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
+  @keyframes gem-burst2 { 0% { transform: scale(0.2); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
+
+  .stone-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(200,145,58,0.5);
-  }
-
-  .long-label .name {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.2rem;
-    color: rgba(200,145,58,0.72);
-    margin-top: 4px;
-  }
-
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(200,145,58,0.1), transparent);
-    margin: 12px 0 40px;
-  }
-
-  .summary {
+    color: #444;
     text-align: center;
-    padding: 24px 20px;
-    background: rgba(26,20,10,0.6);
-    border: 1px solid rgba(200,145,58,0.1);
+    transition: color 0.4s;
+  }
+
+  .stone.done[data-color="space"]   .stone-name { color: #4a7aff; }
+  .stone.done[data-color="mind"]    .stone-name { color: #f5c800; }
+  .stone.done[data-color="reality"] .stone-name { color: #e84040; }
+  .stone.done[data-color="power"]   .stone-name { color: #c060f0; }
+  .stone.done[data-color="time"]    .stone-name { color: #40d070; }
+
+  /* ===== SOUL STONE PANEL ===== */
+  .soul-panel {
+    border-top: 0;
+    padding: 0;
+  }
+
+  .soul-panel-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 20px;
+    background: radial-gradient(ellipse at 50% 60%, rgba(80,30,0,0.5) 0%, #141414 70%);
+    gap: 16px;
+  }
+
+  .soul-stone {
+    width: clamp(130px, 36vw, 170px);
+    height: clamp(130px, 36vw, 170px);
+    position: relative;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.12s ease;
+  }
+
+  .soul-stone:active { transform: scale(0.92); }
+
+  .soul-stone svg.gem-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 0px transparent);
+    transition: filter 0.5s ease;
+  }
+
+  .soul-stone.done svg.gem-svg {
+    filter: drop-shadow(0 0 14px #e86010) drop-shadow(0 0 40px rgba(232,96,16,0.7)) drop-shadow(0 0 80px rgba(232,96,16,0.3));
+  }
+
+  .soul-stone.done .gem-top    { fill: #ff9040; }
+  .soul-stone.done .gem-left   { fill: #c04010; }
+  .soul-stone.done .gem-right  { fill: #802808; }
+  .soul-stone.done .gem-bottom { fill: #401404; }
+  .soul-stone.done .gem-shine  { fill: rgba(255,230,180,0.45); }
+  .soul-stone.done .gem-outline { stroke: rgba(255,200,100,0.35); }
+
+  .soul-stone.done::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
     border-radius: 6px;
-    backdrop-filter: blur(8px);
+    border: 2px solid rgba(232,96,16,0.3);
+    animation: stone-pulse 3s ease infinite;
+    pointer-events: none;
   }
 
-  .summary-line {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.05rem;
-    color: var(--ash);
-    line-height: 1.9;
+  .soul-burst {
+    position: absolute;
+    inset: -40px;
+    pointer-events: none;
+    z-index: 20;
   }
 
-  .summary-line span { color: var(--cream); font-style: normal; }
+  .soul-burst::before, .soul-burst::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  .soul-stone.bursting .soul-burst::before {
+    background: radial-gradient(circle, rgba(255,144,64,0.8) 0%, transparent 65%);
+    animation: gem-burst 0.9s ease-out forwards;
+  }
+  .soul-stone.bursting .soul-burst::after {
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+    animation: gem-burst2 1.1s ease-out 0.06s forwards;
+  }
+
+  .soul-label {
+    text-align: center;
+  }
+
+  .soul-label .soul-name {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    color: #e86010;
+    letter-spacing: 0.1em;
+    text-shadow: 2px 2px 0 #111;
+  }
+
+  .soul-label .soul-duration {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.55rem;
+    color: #555;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ===== SPEECH BUBBLE SUMMARY ===== */
+  .bubble-panel {
+    border-top: 0;
+  }
+
+  .speech-bubble {
+    margin: 14px;
+    background: var(--cream);
+    color: #111;
+    border: 2px solid #111;
+    border-radius: 12px;
+    padding: 14px 16px;
+    position: relative;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #111;
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: var(--cream);
+  }
+
+  .bubble-count { color: #cc1a1a; }
+  .bubble-soul  { color: #e86010; }
 
   .complete-msg {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.4rem;
-    color: var(--cream);
-    margin-top: 10px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    color: #9b30d4;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
     opacity: 0;
     transition: opacity 1s ease;
+    text-shadow: 1px 1px 0 #111;
   }
   .complete-msg.show { opacity: 1; }
 
+  /* ===== ACTION PANEL ===== */
+  .action-panel {
+    border-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #111;
+  }
+
   .undo-btn {
     background: none;
-    border: 1px solid rgba(200,145,58,0.15);
-    color: var(--text-dim);
-    font-family: 'Karla', sans-serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
+    border: 1.5px solid #333;
+    color: #555;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 8px 18px;
+    padding: 5px 12px;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 2px;
     transition: all 0.2s;
-    margin-top: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
     touch-action: manipulation;
   }
-  .undo-btn:hover { border-color: rgba(200,145,58,0.3); color: var(--ash); }
+  .undo-btn:hover { border-color: #555; color: #888; }
 
   .reset-note {
-    text-align: center;
-    margin-top: 14px;
-    font-size: 0.6rem;
-    letter-spacing: 0.22em;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--text-dim);
-    opacity: 0.6;
+    color: #333;
   }
 
-  .history-section {
-    margin-top: 56px;
-    border-top: 1px solid rgba(200,145,58,0.07);
-    padding-top: 36px;
+  /* ===== HISTORY PANEL ===== */
+  .history-panel {
+    border-top: 0;
   }
 
-  .history-title {
-    font-size: 0.62rem;
-    letter-spacing: 0.38em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 20px;
-    text-align: center;
+  .history-body {
+    padding: 8px 12px 4px;
   }
 
   .history-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 0;
-    border-bottom: 1px solid rgba(200,145,58,0.05);
+    padding: 9px 0;
+    border-bottom: 1px solid #1e1e1e;
   }
   .history-row:last-child { border-bottom: none; }
 
   .history-date {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--ash);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    color: #555;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
-  .history-pills { display: flex; gap: 8px; align-items: center; }
+  .history-pills { display: flex; gap: 6px; }
 
   .pill {
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 3px;
+    padding: 3px 8px;
+    border-radius: 2px;
   }
 
-  .pill-short {
-    background: rgba(200,145,58,0.12);
-    color: var(--amber);
-    border: 1px solid rgba(200,145,58,0.2);
-  }
-  .pill-short.incomplete {
-    background: rgba(200,145,58,0.04);
-    color: var(--text-dim);
-    border-color: rgba(200,145,58,0.08);
-  }
-  .pill-long {
-    background: rgba(200,145,58,0.12);
-    color: var(--amber-bright);
-    border: 1px solid rgba(200,145,58,0.2);
-  }
-  .pill-long.incomplete {
-    background: rgba(200,145,58,0.03);
-    color: var(--text-dim);
-    border-color: rgba(200,145,58,0.07);
-  }
+  .pill-short { background: rgba(26,74,255,0.15); color: #4a7aff; border: 1px solid rgba(26,74,255,0.2); }
+  .pill-short.incomplete { background: transparent; color: #333; border-color: #222; }
+  .pill-long  { background: rgba(232,96,16,0.15); color: #e86010; border: 1px solid rgba(232,96,16,0.2); }
+  .pill-long.incomplete  { background: transparent; color: #333; border-color: #222; }
 
   .history-empty {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.95rem;
-    color: var(--text-dim);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    color: #333;
     text-align: center;
-    padding: 24px 0;
+    padding: 20px 0;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Speed lines decoration on soul panel */
+  .speed-lines {
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 8deg, rgba(255,255,255,0.01) 8deg, rgba(255,255,255,0.01) 9deg);
+    pointer-events: none;
   }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="bg-layer">
-  <div class="ember ember-1"></div>
-  <div class="ember ember-2"></div>
-  <div class="ember ember-3"></div>
-  <div id="ash-layer"></div>
-</div>
-
-<div class="container">
-  <header>
-    <div class="title">Breathwork</div>
-    <div class="subtitle">Daily practice</div>
-    <div class="date-display" id="date-display"></div>
-    <div class="sync-status" id="sync-status"></div>
-  </header>
-
-  <div class="section">
-    <div class="section-label">2-minute breaths &mdash; <span id="short-count">0</span> of 5</div>
-    <div class="orb-row" id="short-orbs"></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <div class="section-label">Extended breath</div>
-    <div class="long-breath-wrap">
-      <div class="long-orb" id="long-orb" onclick="clickLong()">
-        <div class="burst"></div>
-        <div class="long-orb-face">
-          <div class="long-orb-inner">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
-              <path d="M12 2C12 2 4 8 4 13a8 8 0 0 0 16 0c0-5-8-11-8-11z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div class="long-label">
-        <div class="duration">10 minutes</div>
-        <div class="name">Deep stillness</div>
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-inner">
+      <div class="comic-title">The<br>Gauntlet</div>
+      <div class="masthead-meta">
+        <div class="issue-num" id="issue-num">#001</div>
+        <div class="masthead-date" id="date-display"></div>
+        <div class="sync-status" id="sync-status"></div>
       </div>
     </div>
   </div>
 
-  <div class="summary">
-    <div class="summary-line">
-      <span id="short-done">0</span> of 5 short &nbsp;&bull;&nbsp; long breath <span id="long-status">remaining</span>
+  <!-- STONES PANEL -->
+  <div class="panel stones-panel">
+    <div class="stones-panel-header">
+      <div class="panel-caption">2-minute stones</div>
+      <div class="stones-count"><span id="short-count">0</span> / 5</div>
     </div>
-    <div class="complete-msg" id="complete-msg">Today's practice is complete ✦</div>
+    <div class="stones-grid" id="short-orbs"></div>
   </div>
 
-  <button class="undo-btn" onclick="undoLast()">undo last</button>
-  <div class="reset-note">Resets at midnight</div>
-
-  <div class="history-section">
-    <div class="history-title">Past days</div>
-    <div id="history-list"><div class="history-empty">Loading…</div></div>
+  <!-- SOUL STONE PANEL -->
+  <div class="panel soul-panel">
+    <div class="panel-caption red">Soul Stone &mdash; 10 minutes</div>
+    <div class="soul-panel-body" style="position:relative;">
+      <div class="speed-lines"></div>
+      <div class="soul-stone" id="long-orb" onclick="clickLong()">
+        <div class="soul-burst"></div>
+        <svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon class="gem-bottom" points="50,95 10,60 90,60"/>
+          <polygon class="gem-right"  points="50,95 90,60 75,20"/>
+          <polygon class="gem-left"   points="50,95 10,60 25,20"/>
+          <polygon class="gem-top"    points="25,20 50,5 75,20 50,55"/>
+          <polygon class="gem-shine"  points="30,22 50,8 48,38" style="fill:rgba(255,255,255,0.06)"/>
+          <polygon class="gem-outline" points="50,5 75,20 90,60 50,95 10,60 25,20" style="fill:none;stroke:#222;stroke-width:2"/>
+        </svg>
+      </div>
+      <div class="soul-label">
+        <div class="soul-name">Soul Stone</div>
+        <div class="soul-duration">10-minute breath</div>
+      </div>
+    </div>
   </div>
+
+  <!-- SPEECH BUBBLE PANEL -->
+  <div class="panel bubble-panel">
+    <div class="speech-bubble">
+      <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; Soul Stone <span class="bubble-soul" id="long-status">remaining</span>
+      <div class="complete-msg" id="complete-msg">POWER INFINITE! ALL SIX COLLECTED!</div>
+    </div>
+  </div>
+
+  <!-- ACTION BAR -->
+  <div class="panel action-panel">
+    <button class="undo-btn" onclick="undoLast()">↩ Undo last</button>
+    <div class="reset-note">Resets at midnight</div>
+  </div>
+
+  <!-- HISTORY PANEL -->
+  <div class="panel history-panel">
+    <div class="panel-caption">Past days</div>
+    <div class="history-body">
+      <div id="history-list"><div class="history-empty">No past sessions yet</div></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  const ashLayer = document.getElementById('ash-layer');
-  for (let i = 0; i < 7; i++) {
-    const p = document.createElement('div');
-    p.className = 'ash-particle';
-    const size = 180 + Math.random() * 280;
-    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*110-5}vw;animation-duration:${24+Math.random()*28}s;animation-delay:${-Math.random()*32}s`;
-    ashLayer.appendChild(p);
+  const STONE_COLORS = ['space','mind','reality','power','time'];
+  const STONE_NAMES  = ['Space','Mind','Reality','Power','Time'];
+
+  // Gem SVG path sets per stone (faceted diamond-cut gem)
+  // Each stone uses different proportions for variety
+  function gemSVG(color) {
+    return `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="gem-bottom" points="50,92 12,58 88,58"/>
+      <polygon class="gem-right"  points="50,92 88,58 72,18"/>
+      <polygon class="gem-left"   points="50,92 12,58 28,18"/>
+      <polygon class="gem-top"    points="28,18 50,6 72,18 50,52"/>
+      <polygon class="gem-shine"  points="32,20 50,8 48,36" style="fill:rgba(255,255,255,0.06)"/>
+      <polygon class="gem-outline" points="50,6 72,18 88,58 50,92 12,58 28,18" style="fill:none;stroke:#222;stroke-width:2"/>
+    </svg>`;
   }
 
   function todayStr() {
@@ -582,7 +682,7 @@
   }
 
   document.getElementById('date-display').textContent =
-    new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 
   let state = { short_count: 0, long_done: false };
 
@@ -595,51 +695,88 @@
   async function loadAll() {
     try {
       const res = await fetch('/api/logs');
+      if (!res.ok) throw new Error();
       const logs = await res.json();
       const today = todayStr();
       const todayLog = logs.find(l => l.date === today);
-      if (todayLog) { state.short_count = todayLog.short_count; state.long_done = todayLog.long_done; }
-      buildOrbs(); updateUI();
+      if (todayLog) {
+        state.short_count  = todayLog.short_count  ?? 0;
+        state.long_done    = todayLog.long_done    ?? false;
+        state.issue_number = todayLog.issue_number ?? null;
+      }
+      // If no entry for today yet, create one to get an issue number assigned
+      if (!todayLog) {
+        const r = await fetch('/api/logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: today, short_count: 0, long_done: false })
+        });
+        if (r.ok) {
+          const created = await r.json();
+          state.issue_number = created.issue_number;
+        }
+      }
+      setIssueNum(state.issue_number);
+      buildStones(); updateUI();
       renderHistory(logs.filter(l => l.date !== today));
     } catch(e) {
-      setSyncStatus('offline — changes may not save', 'error');
-      buildOrbs(); updateUI(); renderHistory([]);
+      setSyncStatus('offline', 'error');
+      buildStones(); updateUI(); renderHistory([]);
     }
+  }
+
+  function setIssueNum(n) {
+    if (!n) return;
+    document.getElementById('issue-num').textContent = '#' + String(n).padStart(3, '0');
   }
 
   async function saveState() {
     setSyncStatus('saving…', 'saving');
     try {
-      await fetch('/api/logs', {
+      const res = await fetch('/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: todayStr(), ...state })
+        body: JSON.stringify({ date: todayStr(), short_count: state.short_count, long_done: state.long_done })
       });
-      setSyncStatus('saved', 'saving');
-      setTimeout(() => setSyncStatus(''), 1800);
+      if (!res.ok) throw new Error();
+      const saved = await res.json();
+      if (saved.issue_number) setIssueNum(saved.issue_number);
+      setSyncStatus('saved ✓', 'saving');
+      setTimeout(() => setSyncStatus(''), 2000);
     } catch(e) { setSyncStatus('save failed', 'error'); }
   }
 
-  function buildOrbs() {
+  function buildStones() {
     const container = document.getElementById('short-orbs');
     container.innerHTML = '';
     for (let i = 0; i < 5; i++) {
-      const orb = document.createElement('div');
-      orb.className = 'orb' + (i < state.short_count ? ' done' : '');
-      orb.id = `orb-${i}`;
-      orb.innerHTML = `<div class="burst"></div><div class="orb-face"><div class="orb-inner"></div></div>`;
-      orb.onclick = () => clickShort(i);
-      container.appendChild(orb);
+      const wrap = document.createElement('div');
+      wrap.className = 'stone-wrap';
+
+      const stone = document.createElement('div');
+      stone.className = 'stone' + (i < state.short_count ? ' done' : '');
+      stone.id = `stone-${i}`;
+      stone.dataset.color = STONE_COLORS[i];
+      stone.innerHTML = `<div class="stone-burst"></div>${gemSVG(STONE_COLORS[i])}`;
+      stone.onclick = () => clickStone(i);
+
+      const label = document.createElement('div');
+      label.className = 'stone-name';
+      label.textContent = STONE_NAMES[i];
+
+      wrap.appendChild(stone);
+      wrap.appendChild(label);
+      container.appendChild(wrap);
     }
   }
 
-  function clickShort(i) {
+  function clickStone(i) {
     if (i !== state.short_count) return;
     state.short_count++;
     saveState();
-    const orb = document.getElementById(`orb-${i}`);
-    orb.classList.add('bursting');
-    setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 700);
+    const stone = document.getElementById(`stone-${i}`);
+    stone.classList.add('bursting');
+    setTimeout(() => { stone.classList.remove('bursting'); stone.classList.add('done'); }, 650);
     updateUI();
   }
 
@@ -649,20 +786,20 @@
     saveState();
     const orb = document.getElementById('long-orb');
     orb.classList.add('bursting');
-    setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 900);
+    setTimeout(() => { orb.classList.remove('bursting'); orb.classList.add('done'); }, 950);
     updateUI();
   }
 
   function undoLast() {
     if (state.long_done) { state.long_done = false; }
     else if (state.short_count > 0) { state.short_count--; }
-    saveState(); buildOrbs(); updateUI();
+    saveState(); buildStones(); updateUI();
   }
 
   function updateUI() {
     document.getElementById('short-count').textContent = state.short_count;
-    document.getElementById('short-done').textContent = state.short_count;
-    document.getElementById('long-status').textContent = state.long_done ? 'complete' : 'remaining';
+    document.getElementById('short-done').textContent  = state.short_count;
+    document.getElementById('long-status').textContent = state.long_done ? 'collected!' : 'remaining';
     document.getElementById('complete-msg').classList.toggle('show', state.short_count >= 5 && state.long_done);
     document.getElementById('long-orb').classList.toggle('done', state.long_done);
   }
@@ -675,14 +812,13 @@
     }
     list.innerHTML = logs.map(log => {
       const d = new Date(log.date + 'T12:00:00');
-      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      const shortFull = log.short_count >= 5;
-      const longFull = log.long_done;
+      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+      const sf = log.short_count >= 5, lf = log.long_done;
       return `<div class="history-row">
         <div class="history-date">${label}</div>
         <div class="history-pills">
-          <span class="pill pill-short ${shortFull?'':'incomplete'}">${log.short_count}/5 short</span>
-          <span class="pill pill-long ${longFull?'':'incomplete'}">${longFull?'10 min ✓':'10 min —'}</span>
+          <span class="pill pill-short ${sf?'':'incomplete'}">${log.short_count}/5 stones</span>
+          <span class="pill pill-long ${lf?'':'incomplete'}">${lf?'Soul ✓':'Soul —'}</span>
         </div>
       </div>`;
     }).join('');

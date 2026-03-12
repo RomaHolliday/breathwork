@@ -228,49 +228,86 @@
     transition: filter 0.4s ease;
   }
 
-  /* Inactive gem faces */
+  /* Inactive crystal faces */
   .gem-top    { fill: rgba(255,255,255,0.06); }
   .gem-left   { fill: rgba(0,0,0,0.3); }
   .gem-right  { fill: rgba(0,0,0,0.5); }
   .gem-bottom { fill: rgba(0,0,0,0.6); }
   .gem-outline { fill: none; stroke: #333; stroke-width: 1.5; }
 
-  /* Active colored gems */
-  .stone.done[data-color="space"] svg.gem-svg   { filter: drop-shadow(0 0 8px #1a4aff) drop-shadow(0 0 20px rgba(26,74,255,0.6)); }
-  .stone.done[data-color="mind"] svg.gem-svg    { filter: drop-shadow(0 0 8px #f5c800) drop-shadow(0 0 20px rgba(245,200,0,0.6)); }
-  .stone.done[data-color="reality"] svg.gem-svg { filter: drop-shadow(0 0 8px #cc1a1a) drop-shadow(0 0 20px rgba(204,26,26,0.6)); }
-  .stone.done[data-color="power"] svg.gem-svg   { filter: drop-shadow(0 0 8px #9b30d4) drop-shadow(0 0 20px rgba(155,48,212,0.6)); }
-  .stone.done[data-color="time"] svg.gem-svg    { filter: drop-shadow(0 0 8px #18a050) drop-shadow(0 0 20px rgba(24,160,80,0.6)); }
+  /* Crystal chunk faces — inactive */
+  .crystal-face-a  { fill: rgba(255,255,255,0.04); }
+  .crystal-face-b  { fill: rgba(0,0,0,0.25); }
+  .crystal-face-c  { fill: rgba(0,0,0,0.18); }
+  .crystal-face-d  { fill: rgba(0,0,0,0.3); }
+  .crystal-shine   { fill: rgba(255,255,255,0.06); }
+  .crystal-shine2  { fill: rgba(255,255,255,0.03); }
+  .crystal-outline { fill: none; stroke: #2a2a2a; stroke-width: 1.5; stroke-linejoin: round; }
+  .crystal-core    { stop-color: #1a1a1a; }
+  .crystal-mid     { stop-color: #111; }
+  .crystal-edge    { stop-color: #0a0a0a; }
 
-  .stone.done[data-color="space"]   .gem-top    { fill: #4a7aff; }
-  .stone.done[data-color="space"]   .gem-left   { fill: #1a3acc; }
-  .stone.done[data-color="space"]   .gem-right  { fill: #0a1a88; }
-  .stone.done[data-color="space"]   .gem-bottom { fill: #060e55; }
-  .stone.done[data-color="space"]   .gem-shine  { fill: rgba(200,220,255,0.4); }
+  /* Active crystal stones — inner glow via gradient stops + face tints */
+  .stone.done[data-color="space"] svg.gem-svg   { filter: drop-shadow(0 0 10px #1a4aff) drop-shadow(0 0 28px rgba(26,74,255,0.55)); }
+  .stone.done[data-color="mind"] svg.gem-svg    { filter: drop-shadow(0 0 10px #f5c800) drop-shadow(0 0 28px rgba(245,200,0,0.55)); }
+  .stone.done[data-color="reality"] svg.gem-svg { filter: drop-shadow(0 0 10px #cc1a1a) drop-shadow(0 0 28px rgba(204,26,26,0.55)); }
+  .stone.done[data-color="power"] svg.gem-svg   { filter: drop-shadow(0 0 10px #9b30d4) drop-shadow(0 0 28px rgba(155,48,212,0.55)); }
+  .stone.done[data-color="time"] svg.gem-svg    { filter: drop-shadow(0 0 10px #18a050) drop-shadow(0 0 28px rgba(24,160,80,0.55)); }
 
-  .stone.done[data-color="mind"]    .gem-top    { fill: #ffe040; }
-  .stone.done[data-color="mind"]    .gem-left   { fill: #c8a000; }
-  .stone.done[data-color="mind"]    .gem-right  { fill: #886800; }
-  .stone.done[data-color="mind"]    .gem-bottom { fill: #553f00; }
-  .stone.done[data-color="mind"]    .gem-shine  { fill: rgba(255,255,200,0.5); }
+  .stone.done[data-color="space"]   .crystal-core  { stop-color: #6688ff; }
+  .stone.done[data-color="space"]   .crystal-mid   { stop-color: #1a3acc; }
+  .stone.done[data-color="space"]   .crystal-edge  { stop-color: #060e55; }
+  .stone.done[data-color="space"]   .crystal-face-a { fill: rgba(120,160,255,0.25); }
+  .stone.done[data-color="space"]   .crystal-face-b { fill: rgba(10,30,120,0.5); }
+  .stone.done[data-color="space"]   .crystal-face-c { fill: rgba(20,50,160,0.35); }
+  .stone.done[data-color="space"]   .crystal-face-d { fill: rgba(6,14,80,0.6); }
+  .stone.done[data-color="space"]   .crystal-shine  { fill: rgba(180,210,255,0.35); }
+  .stone.done[data-color="space"]   .crystal-shine2 { fill: rgba(200,220,255,0.2); }
+  .stone.done[data-color="space"]   .crystal-outline { stroke: rgba(80,130,255,0.4); }
 
-  .stone.done[data-color="reality"] .gem-top    { fill: #e84040; }
-  .stone.done[data-color="reality"] .gem-left   { fill: #aa1010; }
-  .stone.done[data-color="reality"] .gem-right  { fill: #770808; }
-  .stone.done[data-color="reality"] .gem-bottom { fill: #440404; }
-  .stone.done[data-color="reality"] .gem-shine  { fill: rgba(255,200,200,0.4); }
+  .stone.done[data-color="mind"]    .crystal-core  { stop-color: #ffe555; }
+  .stone.done[data-color="mind"]    .crystal-mid   { stop-color: #c89000; }
+  .stone.done[data-color="mind"]    .crystal-edge  { stop-color: #553f00; }
+  .stone.done[data-color="mind"]    .crystal-face-a { fill: rgba(255,230,80,0.25); }
+  .stone.done[data-color="mind"]    .crystal-face-b { fill: rgba(120,80,0,0.5); }
+  .stone.done[data-color="mind"]    .crystal-face-c { fill: rgba(160,110,0,0.35); }
+  .stone.done[data-color="mind"]    .crystal-face-d { fill: rgba(60,40,0,0.6); }
+  .stone.done[data-color="mind"]    .crystal-shine  { fill: rgba(255,250,180,0.4); }
+  .stone.done[data-color="mind"]    .crystal-shine2 { fill: rgba(255,245,200,0.22); }
+  .stone.done[data-color="mind"]    .crystal-outline { stroke: rgba(220,170,0,0.4); }
 
-  .stone.done[data-color="power"]   .gem-top    { fill: #c060f0; }
-  .stone.done[data-color="power"]   .gem-left   { fill: #7820aa; }
-  .stone.done[data-color="power"]   .gem-right  { fill: #4e1277; }
-  .stone.done[data-color="power"]   .gem-bottom { fill: #2e0844; }
-  .stone.done[data-color="power"]   .gem-shine  { fill: rgba(220,180,255,0.4); }
+  .stone.done[data-color="reality"] .crystal-core  { stop-color: #ff5555; }
+  .stone.done[data-color="reality"] .crystal-mid   { stop-color: #aa1010; }
+  .stone.done[data-color="reality"] .crystal-edge  { stop-color: #440404; }
+  .stone.done[data-color="reality"] .crystal-face-a { fill: rgba(255,100,100,0.25); }
+  .stone.done[data-color="reality"] .crystal-face-b { fill: rgba(100,10,10,0.5); }
+  .stone.done[data-color="reality"] .crystal-face-c { fill: rgba(140,20,20,0.35); }
+  .stone.done[data-color="reality"] .crystal-face-d { fill: rgba(50,4,4,0.6); }
+  .stone.done[data-color="reality"] .crystal-shine  { fill: rgba(255,180,180,0.32); }
+  .stone.done[data-color="reality"] .crystal-shine2 { fill: rgba(255,200,200,0.18); }
+  .stone.done[data-color="reality"] .crystal-outline { stroke: rgba(200,40,40,0.4); }
 
-  .stone.done[data-color="time"]    .gem-top    { fill: #40d070; }
-  .stone.done[data-color="time"]    .gem-left   { fill: #108838; }
-  .stone.done[data-color="time"]    .gem-right  { fill: #085a22; }
-  .stone.done[data-color="time"]    .gem-bottom { fill: #043314; }
-  .stone.done[data-color="time"]    .gem-shine  { fill: rgba(180,255,210,0.4); }
+  .stone.done[data-color="power"]   .crystal-core  { stop-color: #cc66ff; }
+  .stone.done[data-color="power"]   .crystal-mid   { stop-color: #7010b0; }
+  .stone.done[data-color="power"]   .crystal-edge  { stop-color: #2e0844; }
+  .stone.done[data-color="power"]   .crystal-face-a { fill: rgba(180,80,255,0.25); }
+  .stone.done[data-color="power"]   .crystal-face-b { fill: rgba(70,10,120,0.5); }
+  .stone.done[data-color="power"]   .crystal-face-c { fill: rgba(100,20,150,0.35); }
+  .stone.done[data-color="power"]   .crystal-face-d { fill: rgba(30,8,55,0.6); }
+  .stone.done[data-color="power"]   .crystal-shine  { fill: rgba(210,160,255,0.32); }
+  .stone.done[data-color="power"]   .crystal-shine2 { fill: rgba(220,180,255,0.18); }
+  .stone.done[data-color="power"]   .crystal-outline { stroke: rgba(150,50,220,0.4); }
+
+  .stone.done[data-color="time"]    .crystal-core  { stop-color: #44e077; }
+  .stone.done[data-color="time"]    .crystal-mid   { stop-color: #108838; }
+  .stone.done[data-color="time"]    .crystal-edge  { stop-color: #043314; }
+  .stone.done[data-color="time"]    .crystal-face-a { fill: rgba(80,220,120,0.25); }
+  .stone.done[data-color="time"]    .crystal-face-b { fill: rgba(8,80,30,0.5); }
+  .stone.done[data-color="time"]    .crystal-face-c { fill: rgba(16,110,45,0.35); }
+  .stone.done[data-color="time"]    .crystal-face-d { fill: rgba(4,40,15,0.6); }
+  .stone.done[data-color="time"]    .crystal-shine  { fill: rgba(160,255,200,0.32); }
+  .stone.done[data-color="time"]    .crystal-shine2 { fill: rgba(180,255,210,0.18); }
+  .stone.done[data-color="time"]    .crystal-outline { stroke: rgba(30,160,80,0.4); }
 
   .stone.done .gem-outline { stroke: rgba(255,255,255,0.3); }
 
@@ -360,12 +397,29 @@
     filter: drop-shadow(0 0 14px #e86010) drop-shadow(0 0 40px rgba(232,96,16,0.7)) drop-shadow(0 0 80px rgba(232,96,16,0.3));
   }
 
-  .soul-stone.done .gem-top    { fill: #ff9040; }
-  .soul-stone.done .gem-left   { fill: #c04010; }
-  .soul-stone.done .gem-right  { fill: #802808; }
-  .soul-stone.done .gem-bottom { fill: #401404; }
-  .soul-stone.done .gem-shine  { fill: rgba(255,230,180,0.45); }
-  .soul-stone.done .gem-outline { stroke: rgba(255,200,100,0.35); }
+  /* Inactive soul crystal */
+  .soul-face-a  { fill: rgba(255,255,255,0.04); }
+  .soul-face-b  { fill: rgba(0,0,0,0.25); }
+  .soul-face-c  { fill: rgba(0,0,0,0.18); }
+  .soul-face-d  { fill: rgba(0,0,0,0.3); }
+  .soul-shine   { fill: rgba(255,255,255,0.05); }
+  .soul-shine2  { fill: rgba(255,255,255,0.03); }
+  .soul-outline { fill: none; stroke: #2a2a2a; stroke-width: 2; stroke-linejoin: round; }
+  .soul-core    { stop-color: #1a1a1a; }
+  .soul-mid     { stop-color: #111; }
+  .soul-edge    { stop-color: #0a0a0a; }
+
+  /* Active soul crystal */
+  .soul-stone.done .soul-core   { stop-color: #ff9a50; }
+  .soul-stone.done .soul-mid    { stop-color: #c04010; }
+  .soul-stone.done .soul-edge   { stop-color: #401404; }
+  .soul-stone.done .soul-face-a { fill: rgba(255,160,80,0.25); }
+  .soul-stone.done .soul-face-b { fill: rgba(120,40,8,0.5); }
+  .soul-stone.done .soul-face-c { fill: rgba(160,55,12,0.35); }
+  .soul-stone.done .soul-face-d { fill: rgba(55,14,4,0.6); }
+  .soul-stone.done .soul-shine  { fill: rgba(255,210,160,0.35); }
+  .soul-stone.done .soul-shine2 { fill: rgba(255,225,180,0.2); }
+  .soul-stone.done .soul-outline { stroke: rgba(220,100,20,0.45); }
 
   .soul-burst {
     position: absolute;
@@ -593,13 +647,22 @@
       <div class="speed-lines"></div>
       <div class="soul-stone" id="long-orb" onclick="clickLong()" ontouchend="event.preventDefault();clickLong()">
         <div class="soul-burst"></div>
-        <svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <polygon class="gem-bottom" points="50,95 10,60 90,60"/>
-          <polygon class="gem-right"  points="50,95 90,60 75,20"/>
-          <polygon class="gem-left"   points="50,95 10,60 25,20"/>
-          <polygon class="gem-top"    points="25,20 50,5 75,20 50,55"/>
-          <polygon class="gem-shine"  points="30,22 50,8 48,38" style="fill:rgba(255,255,255,0.06)"/>
-          <polygon class="gem-outline" points="50,5 75,20 90,60 50,95 10,60 25,20" style="fill:none;stroke:#222;stroke-width:2"/>
+        <svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="glow-soul" cx="46%" cy="38%" r="54%">
+              <stop offset="0%" class="soul-core" stop-opacity="0.9"/>
+              <stop offset="60%" class="soul-mid" stop-opacity="0.6"/>
+              <stop offset="100%" class="soul-edge" stop-opacity="0.88"/>
+            </radialGradient>
+          </defs>
+          <polygon fill="url(#glow-soul)" points="50,6 76,18 90,46 84,78 60,102 40,102 16,78 12,46 26,18"/>
+          <polygon class="soul-face-a" points="50,6 76,18 60,34"/>
+          <polygon class="soul-face-b" points="76,18 90,46 70,44"/>
+          <polygon class="soul-face-c" points="12,46 26,18 44,38"/>
+          <polygon class="soul-face-d" points="84,78 60,102 62,74"/>
+          <polygon class="soul-shine"  points="34,20 52,8 54,32 38,26"/>
+          <polygon class="soul-shine2" points="60,12 74,22 66,34"/>
+          <polyline class="soul-outline" points="50,6 76,18 90,46 84,78 60,102 40,102 16,78 12,46 26,18 50,6"/>
         </svg>
       </div>
       <div class="soul-label">
@@ -639,50 +702,95 @@
 
   // Unique gem cut per stone
   const GEM_SHAPES = {
-    space: `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Space: tall narrow classic diamond -->
-      <polygon class="gem-bottom" points="50,96 8,55 92,55"/>
-      <polygon class="gem-right"  points="50,96 92,55 70,14"/>
-      <polygon class="gem-left"   points="50,96 8,55 30,14"/>
-      <polygon class="gem-top"    points="30,14 50,4 70,14 50,48"/>
-      <polygon class="gem-shine"  points="34,16 50,6 48,34" style="fill:rgba(255,255,255,0.07)"/>
-      <polygon class="gem-outline" points="50,4 70,14 92,55 50,96 8,55 30,14" style="fill:none;stroke:#222;stroke-width:2"/>
+    // Space: chunky irregular crystal, wider base
+    space: `<svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-space" cx="45%" cy="40%" r="55%">
+          <stop offset="0%" class="crystal-core" stop-opacity="0.9"/>
+          <stop offset="60%" class="crystal-mid" stop-opacity="0.6"/>
+          <stop offset="100%" class="crystal-edge" stop-opacity="0.85"/>
+        </radialGradient>
+      </defs>
+      <polygon fill="url(#glow-space)" points="50,8 72,18 88,42 82,72 60,98 38,96 16,70 14,44 28,18"/>
+      <polygon class="crystal-face-a" points="50,8 72,18 58,38"/>
+      <polygon class="crystal-face-b" points="72,18 88,42 68,45"/>
+      <polygon class="crystal-face-c" points="14,44 28,18 42,40"/>
+      <polygon class="crystal-face-d" points="82,72 60,98 62,68"/>
+      <polygon class="crystal-shine"  points="36,20 50,10 54,32 40,28"/>
+      <polygon class="crystal-shine2" points="58,14 70,22 64,34"/>
+      <polyline class="crystal-outline" points="50,8 72,18 88,42 82,72 60,98 38,96 16,70 14,44 28,18 50,8"/>
     </svg>`,
-    mind: `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Mind: wide flat marquise/oval cut -->
-      <polygon class="gem-bottom" points="50,90 6,52 94,52"/>
-      <polygon class="gem-right"  points="50,90 94,52 80,22"/>
-      <polygon class="gem-left"   points="50,90 6,52 20,22"/>
-      <polygon class="gem-top"    points="20,22 50,10 80,22 50,46"/>
-      <polygon class="gem-shine"  points="24,24 50,12 46,38" style="fill:rgba(255,255,255,0.07)"/>
-      <polygon class="gem-outline" points="50,10 80,22 94,52 50,90 6,52 20,22" style="fill:none;stroke:#222;stroke-width:2"/>
+    // Mind: tall angular shard with notch
+    mind: `<svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-mind" cx="50%" cy="35%" r="55%">
+          <stop offset="0%" class="crystal-core" stop-opacity="0.9"/>
+          <stop offset="60%" class="crystal-mid" stop-opacity="0.6"/>
+          <stop offset="100%" class="crystal-edge" stop-opacity="0.85"/>
+        </radialGradient>
+      </defs>
+      <polygon fill="url(#glow-mind)" points="50,6 76,20 84,50 74,80 56,100 44,100 26,80 18,48 26,20"/>
+      <polygon class="crystal-face-a" points="50,6 76,20 60,32"/>
+      <polygon class="crystal-face-b" points="76,20 84,50 66,44"/>
+      <polygon class="crystal-face-c" points="18,48 26,20 42,36"/>
+      <polygon class="crystal-face-d" points="56,100 74,80 68,70"/>
+      <polygon class="crystal-shine"  points="34,22 50,8 52,30 38,26"/>
+      <polygon class="crystal-shine2" points="60,12 74,24 66,36"/>
+      <polyline class="crystal-outline" points="50,6 76,20 84,50 74,80 56,100 44,100 26,80 18,48 26,20 50,6"/>
     </svg>`,
-    reality: `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Reality: asymmetric raw shard -->
-      <polygon class="gem-bottom" points="50,94 10,58 88,62"/>
-      <polygon class="gem-right"  points="50,94 88,62 78,16"/>
-      <polygon class="gem-left"   points="50,94 10,58 26,20"/>
-      <polygon class="gem-top"    points="26,20 50,6 78,16 50,52"/>
-      <polygon class="gem-shine"  points="30,22 52,8 44,40" style="fill:rgba(255,255,255,0.07)"/>
-      <polygon class="gem-outline" points="50,6 78,16 88,62 50,94 10,58 26,20" style="fill:none;stroke:#222;stroke-width:2"/>
+    // Reality: leaning lopsided chunk
+    reality: `<svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-reality" cx="55%" cy="38%" r="52%">
+          <stop offset="0%" class="crystal-core" stop-opacity="0.9"/>
+          <stop offset="60%" class="crystal-mid" stop-opacity="0.6"/>
+          <stop offset="100%" class="crystal-edge" stop-opacity="0.85"/>
+        </radialGradient>
+      </defs>
+      <polygon fill="url(#glow-reality)" points="54,6 80,16 90,44 86,76 62,100 36,98 14,72 12,42 30,16"/>
+      <polygon class="crystal-face-a" points="54,6 80,16 64,30"/>
+      <polygon class="crystal-face-b" points="80,16 90,44 72,40"/>
+      <polygon class="crystal-face-c" points="12,42 30,16 44,38"/>
+      <polygon class="crystal-face-d" points="86,76 62,100 64,72"/>
+      <polygon class="crystal-shine"  points="38,18 56,8 58,30 42,26"/>
+      <polygon class="crystal-shine2" points="64,10 78,20 70,32"/>
+      <polyline class="crystal-outline" points="54,6 80,16 90,44 86,76 62,100 36,98 14,72 12,42 30,16 54,6"/>
     </svg>`,
-    power: `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Power: squat hexagonal orb cut -->
-      <polygon class="gem-bottom" points="50,92 12,62 88,62"/>
-      <polygon class="gem-right"  points="50,92 88,62 76,24"/>
-      <polygon class="gem-left"   points="50,92 12,62 24,24"/>
-      <polygon class="gem-top"    points="24,24 50,12 76,24 50,54"/>
-      <polygon class="gem-shine"  points="28,26 50,14 46,42" style="fill:rgba(255,255,255,0.07)"/>
-      <polygon class="gem-outline" points="50,12 76,24 88,62 50,92 12,62 24,24" style="fill:none;stroke:#222;stroke-width:2"/>
+    // Power: wide squat boulder shape
+    power: `<svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-power" cx="45%" cy="42%" r="52%">
+          <stop offset="0%" class="crystal-core" stop-opacity="0.9"/>
+          <stop offset="60%" class="crystal-mid" stop-opacity="0.6"/>
+          <stop offset="100%" class="crystal-edge" stop-opacity="0.85"/>
+        </radialGradient>
+      </defs>
+      <polygon fill="url(#glow-power)" points="46,8 70,12 90,36 92,66 72,96 48,100 24,94 10,66 12,36 32,12"/>
+      <polygon class="crystal-face-a" points="46,8 70,12 60,34"/>
+      <polygon class="crystal-face-b" points="70,12 90,36 72,38"/>
+      <polygon class="crystal-face-c" points="12,36 32,12 44,36"/>
+      <polygon class="crystal-face-d" points="92,66 72,96 70,72"/>
+      <polygon class="crystal-shine"  points="34,14 50,8 52,32 38,26"/>
+      <polygon class="crystal-shine2" points="58,10 72,18 66,30"/>
+      <polyline class="crystal-outline" points="46,8 70,12 90,36 92,66 72,96 48,100 24,94 10,66 12,36 32,12 46,8"/>
     </svg>`,
-    time: `<svg class="gem-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Time: elongated teardrop -->
-      <polygon class="gem-bottom" points="50,97 14,56 86,56"/>
-      <polygon class="gem-right"  points="50,97 86,56 66,10"/>
-      <polygon class="gem-left"   points="50,97 14,56 34,10"/>
-      <polygon class="gem-top"    points="34,10 50,2 66,10 50,44"/>
-      <polygon class="gem-shine"  points="36,12 50,4 48,30" style="fill:rgba(255,255,255,0.07)"/>
-      <polygon class="gem-outline" points="50,2 66,10 86,56 50,97 14,56 34,10" style="fill:none;stroke:#222;stroke-width:2"/>
+    // Time: tall thin spike
+    time: `<svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-time" cx="48%" cy="32%" r="52%">
+          <stop offset="0%" class="crystal-core" stop-opacity="0.9"/>
+          <stop offset="60%" class="crystal-mid" stop-opacity="0.6"/>
+          <stop offset="100%" class="crystal-edge" stop-opacity="0.85"/>
+        </radialGradient>
+      </defs>
+      <polygon fill="url(#glow-time)" points="50,4 68,16 78,44 74,78 58,102 42,102 26,78 24,44 34,16"/>
+      <polygon class="crystal-face-a" points="50,4 68,16 56,30"/>
+      <polygon class="crystal-face-b" points="68,16 78,44 62,40"/>
+      <polygon class="crystal-face-c" points="24,44 34,16 46,34"/>
+      <polygon class="crystal-face-d" points="74,78 58,102 56,76"/>
+      <polygon class="crystal-shine"  points="36,18 50,6 52,28 38,22"/>
+      <polygon class="crystal-shine2" points="56,8 68,18 62,28"/>
+      <polyline class="crystal-outline" points="50,4 68,16 78,44 74,78 58,102 42,102 26,78 24,44 34,16 50,4"/>
     </svg>`
   };
 

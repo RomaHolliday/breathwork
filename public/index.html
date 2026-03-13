@@ -351,6 +351,73 @@
     100% { opacity: 0; }
   }
 
+  /* Space — warp ripple */
+  @keyframes space-warp {
+    0%   { transform: scale(0.2); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: scale(2.8); opacity: 0; }
+  }
+  @keyframes page-warp {
+    0%   { transform: scale(1); filter: none; }
+    20%  { transform: scale(1.012); filter: hue-rotate(20deg) brightness(1.08); }
+    60%  { transform: scale(0.994); filter: hue-rotate(-10deg); }
+    100% { transform: scale(1); filter: none; }
+  }
+
+  /* Mind — invert flash */
+  @keyframes mind-invert {
+    0%   { opacity: 0; }
+    10%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes mind-body {
+    0%   { filter: none; }
+    12%  { filter: invert(0.9) brightness(1.4) saturate(2); }
+    35%  { filter: invert(0.3) brightness(1.1); }
+    100% { filter: none; }
+  }
+
+  /* Reality — crack fade */
+  @keyframes reality-crack {
+    0%   { opacity: 0; }
+    10%  { opacity: 1; }
+    70%  { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+
+  /* Power — shockwave ring */
+  @keyframes power-ring {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(18); opacity: 0; }
+  }
+  @keyframes power-shake {
+    0%   { transform: translateX(0); }
+    10%  { transform: translateX(-8px) rotate(-0.5deg); }
+    25%  { transform: translateX(7px) rotate(0.5deg); }
+    40%  { transform: translateX(-5px); }
+    55%  { transform: translateX(4px); }
+    70%  { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes quick-flash {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Time — sepia slowdown */
+  @keyframes time-sepia {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes time-body {
+    0%   { filter: none; }
+    10%  { filter: sepia(0.85) saturate(0.4) brightness(0.88); }
+    60%  { filter: sepia(0.3) saturate(0.8); }
+    100% { filter: none; }
+  }
+
   .stone-name {
     font-family: 'Oswald', sans-serif;
     font-size: 0.45rem;
@@ -904,6 +971,117 @@
     stone.classList.add('bursting');
     setTimeout(() => { stone.classList.remove('bursting'); stone.classList.add('done'); }, 650);
     updateUI();
+    setTimeout(() => stoneEffect(STONE_COLORS[i]), 150);
+  }
+
+  function stoneEffect(color) {
+    if (color === 'space')   effectSpace();
+    if (color === 'mind')    effectMind();
+    if (color === 'reality') effectReality();
+    if (color === 'power')   effectPower();
+    if (color === 'time')    effectTime();
+  }
+
+  // SPACE — ripple warp wave across the page
+  function effectSpace() {
+    const el = document.createElement('div');
+    el.style.cssText = `
+      position:fixed; inset:0; z-index:9998; pointer-events:none;
+      background: radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(26,74,255,0.18) 40%, transparent 70%);
+      animation: space-warp 0.9s cubic-bezier(0.2,0.8,0.4,1) forwards;
+    `;
+    document.body.appendChild(el);
+    // Second ripple ring
+    const el2 = document.createElement('div');
+    el2.style.cssText = `
+      position:fixed; inset:0; z-index:9997; pointer-events:none;
+      background: radial-gradient(ellipse at 50% 50%, transparent 10%, rgba(74,122,255,0.1) 50%, transparent 80%);
+      animation: space-warp 1.1s 0.1s cubic-bezier(0.2,0.8,0.4,1) forwards;
+    `;
+    document.body.appendChild(el2);
+    const page = document.querySelector('.page');
+    page.style.animation = 'page-warp 0.7s ease-out forwards';
+    setTimeout(() => { el.remove(); el2.remove(); page.style.animation = ''; }, 1200);
+  }
+
+  // MIND — full screen color inversion flash
+  function effectMind() {
+    const el = document.createElement('div');
+    el.style.cssText = `
+      position:fixed; inset:0; z-index:9998; pointer-events:none;
+      background: rgba(245,200,0,0.12);
+      animation: mind-invert 0.8s ease-out forwards;
+    `;
+    document.body.appendChild(el);
+    document.body.style.animation = 'mind-body 0.5s ease-out forwards';
+    setTimeout(() => { el.remove(); document.body.style.animation = ''; }, 900);
+  }
+
+  // REALITY — cracks spider across screen then dissolve
+  function effectReality() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 400 800');
+    svg.style.cssText = `position:fixed;inset:0;width:100%;height:100%;z-index:9998;pointer-events:none;opacity:0;animation:reality-crack 1.2s ease-out forwards;`;
+    const lines = [
+      'M200,400 L80,180 L30,60','M200,400 L320,200 L370,80','M200,400 L60,500 L10,700',
+      'M200,400 L340,520 L390,720','M200,400 L150,600 L120,800','M200,400 L250,600 L280,800',
+      'M200,400 L100,380 L20,360','M200,400 L300,390 L390,370'
+    ];
+    lines.forEach((d,i) => {
+      const path = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      path.setAttribute('points', d.replace(/M|L/g,'').trim());
+      path.setAttribute('stroke','rgba(204,26,26,0.7)');
+      path.setAttribute('stroke-width', i < 4 ? '1.5' : '1');
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke-linecap','round');
+      svg.appendChild(path);
+    });
+    // Red tint overlay
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('width','400'); rect.setAttribute('height','800');
+    rect.setAttribute('fill','rgba(204,26,26,0.08)');
+    svg.insertBefore(rect, svg.firstChild);
+    document.body.appendChild(svg);
+    setTimeout(() => svg.remove(), 1300);
+  }
+
+  // POWER — screen shake + purple shockwave ring
+  function effectPower() {
+    // Shockwave
+    const ring = document.createElement('div');
+    ring.style.cssText = `
+      position:fixed; left:50%; top:50%; width:40px; height:40px;
+      margin:-20px 0 0 -20px; border-radius:50%; z-index:9998; pointer-events:none;
+      border: 3px solid rgba(155,48,212,0.9);
+      box-shadow: 0 0 20px rgba(155,48,212,0.6), inset 0 0 20px rgba(155,48,212,0.3);
+      animation: power-ring 0.7s ease-out forwards;
+    `;
+    document.body.appendChild(ring);
+    const ring2 = document.createElement('div');
+    ring2.style.cssText = ring.style.cssText;
+    ring2.style.animation = 'power-ring 0.85s 0.12s ease-out forwards';
+    ring2.style.borderColor = 'rgba(155,48,212,0.5)';
+    document.body.appendChild(ring2);
+    // Shake
+    document.querySelector('.page').style.animation = 'power-shake 0.45s ease-out forwards';
+    // Purple flash
+    const flash = document.createElement('div');
+    flash.style.cssText = `position:fixed;inset:0;z-index:9997;pointer-events:none;background:rgba(155,48,212,0.15);animation:quick-flash 0.4s ease-out forwards;`;
+    document.body.appendChild(flash);
+    setTimeout(() => { ring.remove(); ring2.remove(); flash.remove(); document.querySelector('.page').style.animation=''; }, 1000);
+  }
+
+  // TIME — sepia wash that slowly lifts
+  function effectTime() {
+    const el = document.createElement('div');
+    el.style.cssText = `
+      position:fixed; inset:0; z-index:9998; pointer-events:none;
+      background: rgba(24,160,80,0.08);
+      animation: time-sepia 1.4s ease-out forwards;
+    `;
+    document.body.appendChild(el);
+    document.body.style.animation = 'time-body 1.2s ease-out forwards';
+    setTimeout(() => { el.remove(); document.body.style.animation = ''; }, 1500);
   }
 
   function clickLong() {

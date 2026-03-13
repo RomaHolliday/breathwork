@@ -56,7 +56,7 @@
     z-index: 1;
     max-width: 480px;
     margin: 0 auto;
-    padding: 16px 12px 60px;
+    padding: 0 0 env(safe-area-inset-bottom, 24px);
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -65,9 +65,9 @@
   /* ===== MASTHEAD ===== */
   .masthead {
     background: #cc1a1a;
-    border: 3px solid #111;
-    padding: 10px 16px 8px;
-    margin-bottom: 0;
+    border: none;
+    border-bottom: 3px solid #111;
+    padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 12px;
     position: relative;
     overflow: hidden;
   }
@@ -95,10 +95,10 @@
 
   .comic-title {
     font-family: 'Bangers', cursive;
-    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
     letter-spacing: 0.06em;
     color: #fff;
-    line-height: 0.9;
+    line-height: 0.88;
     text-shadow: 3px 3px 0 #800, 5px 5px 0 #111;
   }
 
@@ -108,7 +108,7 @@
 
   .issue-num {
     font-family: 'Bangers', cursive;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #f5c800;
     letter-spacing: 0.1em;
     text-shadow: 1px 1px 0 #111;
@@ -116,39 +116,29 @@
 
   .masthead-date {
     font-family: 'Oswald', sans-serif;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     color: rgba(255,255,255,0.7);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-top: 2px;
+    margin-top: 3px;
   }
-
-  .sync-status {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-top: 2px;
-    height: 16px;
-    transition: color 0.3s;
-  }
-  .sync-status.saving { color: #f5c800; font-weight: 600; }
-  .sync-status.error  { color: #ff6666; font-weight: 600; }
 
   /* ===== COMIC PANELS ===== */
   .panel {
-    border: 3px solid #111;
+    border: none;
+    border-top: 2px solid #1a1a1a;
     background: var(--panel);
     position: relative;
     overflow: hidden;
   }
 
+  .panel:first-child { border-top: none; }
+
   .panel::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
     background-size: 5px 5px;
     pointer-events: none;
   }
@@ -161,7 +151,7 @@
     font-size: 0.6rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 4px 10px;
+    padding: 5px 14px;
     border-bottom: 2px solid #111;
     display: inline-block;
   }
@@ -180,24 +170,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px 0 0;
+    padding: 0 16px 0 0;
     border-bottom: 2px solid #111;
   }
 
   .stones-count {
     font-family: 'Bangers', cursive;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #f5c800;
     letter-spacing: 0.08em;
-    padding: 4px 12px;
+    padding: 5px 14px;
     background: #111;
   }
 
   .stones-grid {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-    padding: 20px 12px;
+    gap: 0;
+    justify-content: space-around;
+    padding: 24px 8px 20px;
     background: radial-gradient(ellipse at 50% 100%, rgba(30,20,60,0.8) 0%, #141414 70%);
   }
 
@@ -206,19 +196,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    flex: 1;
   }
 
   .stone {
-    width: clamp(52px, 13vw, 68px);
-    height: clamp(52px, 13vw, 68px);
+    width: clamp(58px, 16vw, 76px);
+    height: clamp(58px, 16vw, 76px);
     position: relative;
     cursor: pointer;
     touch-action: manipulation;
     transition: transform 0.1s ease;
   }
 
-  .stone:active { transform: scale(0.85); }
+  .stone:active { transform: scale(0.82); }
 
   /* SVG gem */
   .stone svg.gem-svg {
@@ -444,21 +435,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 16px 20px;
+    padding: 32px 16px 28px;
     background: radial-gradient(ellipse at 50% 60%, rgba(80,30,0,0.5) 0%, #141414 70%);
-    gap: 16px;
+    gap: 18px;
   }
 
   .soul-stone {
-    width: clamp(130px, 36vw, 170px);
-    height: clamp(130px, 36vw, 170px);
+    width: clamp(150px, 42vw, 200px);
+    height: clamp(150px, 42vw, 200px);
     position: relative;
     cursor: pointer;
     touch-action: manipulation;
     transition: transform 0.12s ease;
   }
 
-  .soul-stone:active { transform: scale(0.92); }
+  .soul-stone:active { transform: scale(0.9); }
 
   .soul-stone svg.gem-svg {
     width: 100%;
@@ -547,15 +538,15 @@
   }
 
   .speech-bubble {
-    margin: 14px;
+    margin: 16px 20px;
     background: var(--cream);
     color: #111;
     border: 2px solid #111;
-    border-radius: 12px;
-    padding: 14px 16px;
+    border-radius: 14px;
+    padding: 16px 20px;
     position: relative;
     font-family: 'Bangers', cursive;
-    font-size: 1rem;
+    font-size: 1.1rem;
     letter-spacing: 0.06em;
     text-align: center;
     line-height: 1.6;
@@ -598,73 +589,74 @@
 
   /* ===== ACTION PANEL ===== */
   .action-panel {
-    border-top: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
-    background: #111;
+    padding: 12px 20px;
+    background: #0d0d0d;
+    border-top: 1px solid #1a1a1a;
   }
 
   .undo-btn {
-    background: none;
-    border: 1.5px solid #333;
-    color: #555;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #666;
     font-family: 'Oswald', sans-serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    padding: 5px 12px;
+    padding: 10px 18px;
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: 6px;
     transition: all 0.2s;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
-  .undo-btn:hover { border-color: #555; color: #888; }
+  .undo-btn:active { background: #222; color: #999; transform: scale(0.96); }
 
   .reset-note {
     font-family: 'Oswald', sans-serif;
     font-size: 0.5rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #333;
+    color: #2a2a2a;
   }
 
   /* ===== HISTORY PANEL ===== */
   .history-panel {
-    border-top: 0;
+    border-top: 1px solid #1a1a1a;
   }
 
   .history-body {
-    padding: 8px 12px 4px;
+    padding: 4px 20px 12px;
   }
 
   .history-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid #1e1e1e;
+    padding: 13px 0;
+    border-bottom: 1px solid #181818;
   }
   .history-row:last-child { border-bottom: none; }
 
   .history-date {
     font-family: 'Oswald', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #555;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .history-pills { display: flex; gap: 6px; }
+  .history-pills { display: flex; gap: 8px; }
 
   .pill {
     font-family: 'Oswald', sans-serif;
-    font-size: 0.5rem;
+    font-size: 0.52rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 2px;
+    padding: 4px 10px;
+    border-radius: 4px;
   }
 
   .pill-short { background: rgba(26,74,255,0.15); color: #4a7aff; border: 1px solid rgba(26,74,255,0.2); }

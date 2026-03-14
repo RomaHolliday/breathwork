@@ -692,8 +692,30 @@
     text-transform: uppercase;
   }
 
-  /* Speed lines decoration on soul panel */
-  .speed-lines {
+  /* ===== GAUNTLET STONES ===== */
+  .gauntlet-stone {
+    transition: filter 0.5s ease;
+  }
+  #slot-space.lit   { fill: url(#g-space);   stroke: rgba(100,150,255,0.8); filter: drop-shadow(0 0 6px #1a4aff); }
+  #slot-mind.lit    { fill: url(#g-mind);    stroke: rgba(245,200,0,0.8);   filter: drop-shadow(0 0 6px #f5c800); }
+  #slot-reality.lit { fill: url(#g-reality); stroke: rgba(255,80,80,0.8);   filter: drop-shadow(0 0 6px #cc1a1a); }
+  #slot-power.lit   { fill: url(#g-power);   stroke: rgba(180,80,255,0.8);  filter: drop-shadow(0 0 6px #9b30d4); }
+  #slot-time.lit    { fill: url(#g-time);    stroke: rgba(60,200,100,0.8);  filter: drop-shadow(0 0 6px #18a050); }
+  #slot-soul.lit    { fill: url(#g-soul);    stroke: rgba(255,150,50,0.8);  filter: drop-shadow(0 0 10px #e86010); }
+
+  /* Gauntlet glow when all stones active */
+  #gauntlet-svg.complete {
+    filter: drop-shadow(0 0 16px rgba(232,96,16,0.6)) drop-shadow(0 0 40px rgba(155,48,212,0.3));
+  }
+
+  .soul-label .soul-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.55rem;
+    color: #444;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+  }
     position: absolute;
     inset: 0;
     background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 8deg, rgba(255,255,255,0.01) 8deg, rgba(255,255,255,0.01) 9deg);
@@ -761,34 +783,163 @@
     <div class="stones-grid" id="short-orbs"></div>
   </div>
 
-  <!-- SOUL STONE PANEL -->
+  <!-- GAUNTLET PANEL -->
   <div class="panel soul-panel">
-    <div class="panel-caption red">Soul Stone &mdash; 10 minutes</div>
-    <div class="soul-panel-body" style="position:relative;">
+    <div class="panel-caption red">The Infinity Gauntlet</div>
+    <div class="soul-panel-body" style="position:relative; padding: 8px 0 4px;">
       <div class="speed-lines"></div>
-      <div class="soul-stone" id="long-orb" onclick="clickLong()" ontouchend="event.preventDefault();clickLong()">
-        <div class="soul-burst"></div>
-        <svg class="gem-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="glow-soul" cx="46%" cy="38%" r="54%">
-              <stop offset="0%" class="soul-core" stop-opacity="0.9"/>
-              <stop offset="60%" class="soul-mid" stop-opacity="0.6"/>
-              <stop offset="100%" class="soul-edge" stop-opacity="0.88"/>
-            </radialGradient>
-          </defs>
-          <polygon fill="url(#glow-soul)" points="50,6 76,18 90,46 84,78 60,102 40,102 16,78 12,46 26,18"/>
-          <polygon class="soul-face-a" points="50,6 76,18 60,34"/>
-          <polygon class="soul-face-b" points="76,18 90,46 70,44"/>
-          <polygon class="soul-face-c" points="12,46 26,18 44,38"/>
-          <polygon class="soul-face-d" points="84,78 60,102 62,74"/>
-          <polygon class="soul-shine"  points="34,20 52,8 54,32 38,26"/>
-          <polygon class="soul-shine2" points="60,12 74,22 66,34"/>
-          <polyline class="soul-outline" points="50,6 76,18 90,46 84,78 60,102 40,102 16,78 12,46 26,18 50,6"/>
-        </svg>
+      <svg id="gauntlet-svg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg"
+        style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto;">
+        <defs>
+          <!-- Gauntlet gold gradient -->
+          <linearGradient id="gold-main" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#c8922a"/>
+            <stop offset="40%"  stop-color="#f0c040"/>
+            <stop offset="70%"  stop-color="#d4950a"/>
+            <stop offset="100%" stop-color="#8a5c0a"/>
+          </linearGradient>
+          <linearGradient id="gold-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#8a5c0a"/>
+            <stop offset="100%" stop-color="#4a3000"/>
+          </linearGradient>
+          <linearGradient id="gold-finger" x1="0%" y1="0%" x2="30%" y2="100%">
+            <stop offset="0%"   stop-color="#e8b830"/>
+            <stop offset="50%"  stop-color="#c07810"/>
+            <stop offset="100%" stop-color="#7a4800"/>
+          </linearGradient>
+          <!-- Stone slot (inactive) -->
+          <radialGradient id="slot-empty" cx="50%" cy="40%" r="55%">
+            <stop offset="0%"   stop-color="#222"/>
+            <stop offset="100%" stop-color="#0a0a0a"/>
+          </radialGradient>
+          <!-- Active stone gradients -->
+          <radialGradient id="g-space"   cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#88aaff"/><stop offset="100%" stop-color="#060e55"/></radialGradient>
+          <radialGradient id="g-mind"    cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#ffe060"/><stop offset="100%" stop-color="#553f00"/></radialGradient>
+          <radialGradient id="g-reality" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#ff7070"/><stop offset="100%" stop-color="#440404"/></radialGradient>
+          <radialGradient id="g-power"   cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#d080ff"/><stop offset="100%" stop-color="#2e0844"/></radialGradient>
+          <radialGradient id="g-time"    cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#60e890"/><stop offset="100%" stop-color="#043314"/></radialGradient>
+          <radialGradient id="g-soul"    cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#ffaa50"/><stop offset="100%" stop-color="#401404"/></radialGradient>
+          <!-- Knuckle plate gradient -->
+          <linearGradient id="knuckle-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#e8b830"/>
+            <stop offset="100%" stop-color="#9a6010"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ===== WRIST / FOREARM ===== -->
+        <path d="M80,340 L80,295 Q80,280 95,275 L205,275 Q220,280 220,295 L220,340 Q220,358 200,362 L100,362 Q80,358 80,340 Z" fill="url(#gold-main)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Wrist plate detail lines -->
+        <line x1="95" y1="295" x2="205" y2="295" stroke="#c07010" stroke-width="1" opacity="0.6"/>
+        <line x1="90" y1="310" x2="210" y2="310" stroke="#c07010" stroke-width="1" opacity="0.5"/>
+        <line x1="85" y1="328" x2="215" y2="328" stroke="#c07010" stroke-width="1" opacity="0.4"/>
+        <!-- Wrist side shading -->
+        <path d="M80,295 L80,340 Q80,358 100,362 L100,275 Q80,278 80,295 Z" fill="url(#gold-dark)" opacity="0.5"/>
+        <path d="M220,295 L220,340 Q220,358 200,362 L200,275 Q220,278 220,295 Z" fill="url(#gold-dark)" opacity="0.4"/>
+
+        <!-- ===== PALM ===== -->
+        <path d="M72,180 L72,278 Q72,282 80,282 L220,282 Q228,282 228,278 L228,180 Q228,165 215,160 L85,160 Q72,165 72,180 Z" fill="url(#gold-main)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Palm plate lines -->
+        <line x1="82" y1="180" x2="218" y2="180" stroke="#c07010" stroke-width="1" opacity="0.5"/>
+        <line x1="78" y1="200" x2="222" y2="200" stroke="#c07010" stroke-width="1" opacity="0.4"/>
+        <line x1="78" y1="230" x2="222" y2="230" stroke="#c07010" stroke-width="1" opacity="0.35"/>
+        <line x1="78" y1="260" x2="222" y2="260" stroke="#c07010" stroke-width="1" opacity="0.3"/>
+        <!-- Palm left shading -->
+        <path d="M72,180 L72,278 Q72,282 80,282 L88,282 L88,160 L85,160 Q72,165 72,180 Z" fill="url(#gold-dark)" opacity="0.45"/>
+        <path d="M228,180 L228,278 Q228,282 220,282 L212,282 L212,160 L215,160 Q228,165 228,180 Z" fill="url(#gold-dark)" opacity="0.35"/>
+
+        <!-- ===== THUMB ===== -->
+        <!-- Thumb base -->
+        <path d="M72,220 L50,215 Q38,215 35,225 L35,258 Q35,268 45,270 L72,268 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Thumb tip -->
+        <path d="M35,225 L20,228 Q12,232 12,242 L12,252 Q12,260 20,262 L35,258 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <line x1="35" y1="225" x2="35" y2="258" stroke="#c07010" stroke-width="1" opacity="0.5"/>
+
+        <!-- ===== FINGERS ===== -->
+        <!-- Index finger -->
+        <path d="M88,160 L88,80 Q88,65 98,62 L112,62 Q122,65 122,80 L122,160 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <path d="M90,155 L90,82 Q90,70 98,68 L112,68 Q120,70 120,82 L120,155 Z" fill="url(#gold-dark)" opacity="0.2"/>
+        <!-- Index fingertip -->
+        <path d="M88,80 L88,58 Q88,45 98,42 L112,42 Q122,45 122,58 L122,80 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <ellipse cx="105" cy="52" rx="12" ry="8" fill="url(#gold-main)" stroke="#c07010" stroke-width="1"/>
+        <line x1="88" y1="80" x2="122" y2="80" stroke="#c07010" stroke-width="1.5" opacity="0.7"/>
+        <line x1="88" y1="120" x2="122" y2="120" stroke="#c07010" stroke-width="1.2" opacity="0.5"/>
+
+        <!-- Middle finger -->
+        <path d="M128,160 L128,68 Q128,52 138,48 L152,48 Q162,52 162,68 L162,160 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <path d="M130,155 L130,70 Q130,58 138,55 L152,55 Q160,58 160,70 L160,155 Z" fill="url(#gold-dark)" opacity="0.2"/>
+        <!-- Middle fingertip -->
+        <path d="M128,68 L128,42 Q128,28 138,25 L152,25 Q162,28 162,42 L162,68 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <ellipse cx="145" cy="36" rx="12" ry="9" fill="url(#gold-main)" stroke="#c07010" stroke-width="1"/>
+        <line x1="128" y1="68" x2="162" y2="68" stroke="#c07010" stroke-width="1.5" opacity="0.7"/>
+        <line x1="128" y1="108" x2="162" y2="108" stroke="#c07010" stroke-width="1.2" opacity="0.5"/>
+
+        <!-- Ring finger -->
+        <path d="M168,160 L168,75 Q168,60 178,57 L192,57 Q202,60 202,75 L202,160 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <path d="M170,155 L170,77 Q170,65 178,62 L192,62 Q200,65 200,77 L200,155 Z" fill="url(#gold-dark)" opacity="0.2"/>
+        <!-- Ring fingertip -->
+        <path d="M168,75 L168,50 Q168,36 178,33 L192,33 Q202,36 202,50 L202,75 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <ellipse cx="185" cy="44" rx="12" ry="8" fill="url(#gold-main)" stroke="#c07010" stroke-width="1"/>
+        <line x1="168" y1="75" x2="202" y2="75" stroke="#c07010" stroke-width="1.5" opacity="0.7"/>
+        <line x1="168" y1="115" x2="202" y2="115" stroke="#c07010" stroke-width="1.2" opacity="0.5"/>
+
+        <!-- Pinky finger -->
+        <path d="M208,160 L208,95 Q208,80 216,77 L228,77 Q236,80 236,95 L236,160 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <path d="M210,155 L210,97 Q210,85 216,83 L228,83 Q234,85 234,97 L234,155 Z" fill="url(#gold-dark)" opacity="0.2"/>
+        <!-- Pinky fingertip -->
+        <path d="M208,95 L208,72 Q208,60 216,57 L228,57 Q236,60 236,72 L236,95 Z" fill="url(#gold-finger)" stroke="#4a3000" stroke-width="1.5"/>
+        <ellipse cx="222" cy="67" rx="10" ry="7" fill="url(#gold-main)" stroke="#c07010" stroke-width="1"/>
+        <line x1="208" y1="95" x2="236" y2="95" stroke="#c07010" stroke-width="1.5" opacity="0.7"/>
+        <line x1="208" y1="128" x2="236" y2="128" stroke="#c07010" stroke-width="1.2" opacity="0.5"/>
+
+        <!-- ===== KNUCKLE PLATES ===== -->
+        <!-- Index knuckle -->
+        <rect x="88" y="155" width="34" height="22" rx="4" fill="url(#knuckle-grad)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Middle knuckle -->
+        <rect x="128" y="155" width="34" height="22" rx="4" fill="url(#knuckle-grad)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Ring knuckle -->
+        <rect x="168" y="155" width="34" height="22" rx="4" fill="url(#knuckle-grad)" stroke="#4a3000" stroke-width="1.5"/>
+        <!-- Pinky knuckle -->
+        <rect x="208" y="155" width="28" height="22" rx="4" fill="url(#knuckle-grad)" stroke="#4a3000" stroke-width="1.5"/>
+
+        <!-- ===== STONE SLOTS ON KNUCKLES ===== -->
+        <!-- Space (index) -->
+        <ellipse id="slot-space" cx="105" cy="166" rx="12" ry="8" fill="url(#slot-empty)" stroke="#333" stroke-width="1.5" class="gauntlet-stone" data-stone="space"/>
+        <!-- Mind (middle) -->
+        <ellipse id="slot-mind" cx="145" cy="166" rx="12" ry="8" fill="url(#slot-empty)" stroke="#333" stroke-width="1.5" class="gauntlet-stone" data-stone="mind"/>
+        <!-- Reality (ring) -->
+        <ellipse id="slot-reality" cx="185" cy="166" rx="12" ry="8" fill="url(#slot-empty)" stroke="#333" stroke-width="1.5" class="gauntlet-stone" data-stone="reality"/>
+        <!-- Power (pinky) -->
+        <ellipse id="slot-power" cx="222" cy="166" rx="10" ry="7" fill="url(#slot-empty)" stroke="#333" stroke-width="1.5" class="gauntlet-stone" data-stone="power"/>
+
+        <!-- ===== BACK OF HAND PLATE (Time + Soul) ===== -->
+        <ellipse cx="150" cy="222" rx="55" ry="42" fill="url(#knuckle-grad)" stroke="#4a3000" stroke-width="2"/>
+        <ellipse cx="150" cy="222" rx="48" ry="36" fill="url(#gold-main)" stroke="#c07010" stroke-width="1" opacity="0.6"/>
+
+        <!-- Time stone (upper back of hand) -->
+        <ellipse id="slot-time" cx="150" cy="205" rx="13" ry="9" fill="url(#slot-empty)" stroke="#333" stroke-width="1.5" class="gauntlet-stone" data-stone="time"/>
+
+        <!-- Soul stone (center back of hand - larger, most prominent) -->
+        <ellipse id="slot-soul" cx="150" cy="230" rx="18" ry="13" fill="url(#slot-empty)" stroke="#444" stroke-width="2" class="gauntlet-stone" data-stone="soul"/>
+
+        <!-- Decorative rivets -->
+        <circle cx="100" cy="282" r="3" fill="#c07010" stroke="#8a5010" stroke-width="1"/>
+        <circle cx="150" cy="282" r="3" fill="#c07010" stroke="#8a5010" stroke-width="1"/>
+        <circle cx="200" cy="282" r="3" fill="#c07010" stroke="#8a5010" stroke-width="1"/>
+        <circle cx="88"  cy="310" r="2.5" fill="#c07010" stroke="#8a5010" stroke-width="1"/>
+        <circle cx="212" cy="310" r="2.5" fill="#c07010" stroke="#8a5010" stroke-width="1"/>
+
+        <!-- Knuckle separator lines -->
+        <line x1="122" y1="158" x2="128" y2="158" stroke="#4a3000" stroke-width="2"/>
+        <line x1="162" y1="158" x2="168" y2="158" stroke="#4a3000" stroke-width="2"/>
+        <line x1="202" y1="158" x2="208" y2="158" stroke="#4a3000" stroke-width="2"/>
+      </svg>
+
+      <!-- Soul stone tap target (separate from SVG for mobile) -->
+      <div id="long-orb" onclick="clickLong()" ontouchend="event.preventDefault();clickLong()"
+        style="position:absolute;opacity:0;width:60px;height:44px;left:50%;top:52%;transform:translate(-50%,-50%);cursor:pointer;touch-action:manipulation;">
       </div>
-      <div class="soul-label">
-        <div class="soul-name">Soul Stone</div>
-        <div class="soul-duration">10-minute breath</div>
+      <div class="soul-label" style="margin-top:4px;">
+        <div class="soul-name">Tap stones above &bull; Soul Stone last</div>
       </div>
     </div>
   </div>
@@ -797,7 +948,7 @@
   <div class="panel bubble-panel">
     <div class="speech-bubble">
       <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span>
-      <div class="complete-msg" id="complete-msg">POWER INFINITE! ALL SIX COLLECTED!</div>
+      <div class="complete-msg" id="complete-msg">What did it cost?<br><span style="color:#e86010">Everything.</span></div>
     </div>
     <div class="timer-display" id="timer-display" style="display:none;">
       <span class="timer-label">NEXT STONE IN</span>
@@ -1442,6 +1593,19 @@
 
     document.getElementById('complete-msg').classList.toggle('show', state.short_count >= 5 && state.long_done);
     document.getElementById('long-orb').classList.toggle('done', state.long_done);
+    updateGauntlet();
+  }
+
+  function updateGauntlet() {
+    const stoneMap = ['space','mind','reality','power','time'];
+    stoneMap.forEach((name, i) => {
+      const el = document.getElementById('slot-' + name);
+      if (el) el.classList.toggle('lit', i < state.short_count);
+    });
+    const soulEl = document.getElementById('slot-soul');
+    if (soulEl) soulEl.classList.toggle('lit', state.long_done);
+    const gauntlet = document.getElementById('gauntlet-svg');
+    if (gauntlet) gauntlet.classList.toggle('complete', state.short_count >= 5 && state.long_done);
   }
 
   // ===== TIMER =====

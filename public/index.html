@@ -847,7 +847,7 @@
   <!-- SPEECH BUBBLE PANEL -->
   <div class="panel bubble-panel">
     <div class="speech-bubble">
-      <div class="bubble-status"><span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span></div>
+      <div class="bubble-status"><span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">I Am Inevitable.</span></div>
       <div class="timer-display" id="timer-display" style="display:none;">
         <span class="timer-label">Next stone in</span>
         <span class="timer-digits" id="timer-digits">1:30:00</span>
@@ -1483,7 +1483,7 @@
       nextEl.textContent = 'All stones collected!';
       nextEl.style.color = '#9b30d4';
     } else if (state.short_count === 0) {
-      nextEl.textContent = 'Soul Stone remaining';
+      nextEl.textContent = 'I Am Inevitable.';
       nextEl.style.color = '';
     } else if (state.short_count >= 5) {
       nextEl.textContent = 'Finally: Soul Stone';

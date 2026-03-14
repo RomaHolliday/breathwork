@@ -558,8 +558,15 @@
     color: #111;
     border: 2px solid #111;
     border-radius: 14px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .bubble-status {
     font-family: 'Bangers', cursive;
     font-size: 1rem;
     letter-spacing: 0.06em;
@@ -727,24 +734,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    margin-top: 10px;
+    gap: 2px;
+    width: 100%;
     padding-top: 10px;
-    border-top: 1.5px solid rgba(0,0,0,0.12);
+    margin-top: 8px;
+    border-top: 1.5px solid rgba(0,0,0,0.1);
   }
 
   .timer-label {
     font-family: 'Oswald', sans-serif;
     font-size: 0.55rem;
     letter-spacing: 0.25em;
-    color: #666;
+    color: #777;
     text-transform: uppercase;
   }
 
   .timer-digits {
     font-family: 'Bangers', cursive;
-    font-size: 3rem;
-    letter-spacing: 0.1em;
+    font-size: 3.2rem;
+    letter-spacing: 0.08em;
     color: #f5c800;
     line-height: 1;
     text-shadow: 3px 3px 0 #111, 0 0 24px rgba(245,200,0,0.35);
@@ -763,22 +771,22 @@
   }
 
   .cancel-timer-btn {
-    background: none;
-    border: 1px solid #2a2a2a;
-    color: #444;
+    margin-top: 8px;
+    background: #111;
+    border: none;
+    color: #555;
     font-family: 'Oswald', sans-serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.18em;
+    font-size: 0.52rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 5px 12px;
+    padding: 7px 18px;
     border-radius: 4px;
     cursor: pointer;
     touch-action: manipulation;
-    margin-top: 2px;
-    transition: all 0.2s;
+    transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .cancel-timer-btn:active { border-color: #555; color: #888; transform: scale(0.95); }
+  .cancel-timer-btn:active { background: #222; color: #999; transform: scale(0.95); }
 </style>
 </head>
 <body>
@@ -839,11 +847,11 @@
   <!-- SPEECH BUBBLE PANEL -->
   <div class="panel bubble-panel">
     <div class="speech-bubble">
-      <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span>
+      <div class="bubble-status"><span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span></div>
       <div class="timer-display" id="timer-display" style="display:none;">
-        <span class="timer-label">NEXT STONE IN</span>
+        <span class="timer-label">Next stone in</span>
         <span class="timer-digits" id="timer-digits">1:30:00</span>
-        <button class="cancel-timer-btn" onclick="stopTimer()">✕ cancel timer</button>
+        <button class="cancel-timer-btn" onclick="stopTimer()">✕ Cancel timer</button>
       </div>
       <div class="complete-msg" id="complete-msg">What did it cost?<br><span style="color:#e86010">Everything.</span></div>
     </div>

@@ -727,8 +727,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 0 10px;
     gap: 2px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0,0,0,0.1);
   }
 
   .timer-label {
@@ -758,6 +760,24 @@
     0%, 100% { transform: scale(1); }
     50%       { transform: scale(1.06); }
   }
+
+  .cancel-timer-btn {
+    background: none;
+    border: 1px solid #2a2a2a;
+    color: #444;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    touch-action: manipulation;
+    margin-top: 2px;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cancel-timer-btn:active { border-color: #555; color: #888; transform: scale(0.95); }
 </style>
 </head>
 <body>
@@ -819,11 +839,12 @@
   <div class="panel bubble-panel">
     <div class="speech-bubble">
       <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span>
+      <div class="timer-display" id="timer-display" style="display:none;">
+        <span class="timer-label">NEXT STONE IN</span>
+        <span class="timer-digits" id="timer-digits">1:30:00</span>
+        <button class="cancel-timer-btn" onclick="stopTimer()">✕ cancel timer</button>
+      </div>
       <div class="complete-msg" id="complete-msg">What did it cost?<br><span style="color:#e86010">Everything.</span></div>
-    </div>
-    <div class="timer-display" id="timer-display" style="display:none;">
-      <span class="timer-label">NEXT STONE IN</span>
-      <span class="timer-digits" id="timer-digits">1:30:00</span>
     </div>
   </div>
 
@@ -1496,6 +1517,7 @@
       if (timerSeconds <= 0) {
         stopTimer();
         playAlarm();
+        sendPushNotification();
       }
     }, 1000);
   }
@@ -1503,6 +1525,53 @@
   function stopTimer() {
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
     document.getElementById('timer-display').style.display = 'none';
+  }
+
+  // ===== PUSH NOTIFICATIONS =====
+  let pushSubscription = null;
+
+  async function initPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      const keyRes = await fetch('/api/vapid-public-key');
+      const { key } = await keyRes.json();
+
+      const existing = await reg.pushManager.getSubscription();
+      if (existing) { pushSubscription = existing; return; }
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+
+      pushSubscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(key),
+      });
+
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: pushSubscription }),
+      });
+    } catch(e) { console.warn('Push setup failed:', e); }
+  }
+
+  async function sendPushNotification() {
+    if (!pushSubscription) return;
+    try {
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: pushSubscription.endpoint }),
+      });
+    } catch(e) { console.warn('Push notify failed:', e); }
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
   }
 
   function updateTimerDisplay() {
@@ -1573,6 +1642,7 @@
   }
 
   loadAll();
+  initPush();
 
   // Prevent all scrolling/bouncing
   document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });

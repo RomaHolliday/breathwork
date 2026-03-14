@@ -699,7 +699,43 @@
     background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 8deg, rgba(255,255,255,0.01) 8deg, rgba(255,255,255,0.01) 9deg);
     pointer-events: none;
   }
-</style>
+
+  /* ===== TIMER ===== */
+  .timer-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 10px;
+    gap: 2px;
+  }
+
+  .timer-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.25em;
+    color: #444;
+    text-transform: uppercase;
+  }
+
+  .timer-digits {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    color: #f5c800;
+    text-shadow: 2px 2px 0 #111, 0 0 20px rgba(245,200,0,0.3);
+    transition: color 0.3s;
+  }
+
+  .timer-digits.urgent {
+    color: #cc1a1a;
+    text-shadow: 2px 2px 0 #111, 0 0 20px rgba(204,26,26,0.5);
+    animation: timer-pulse 0.8s ease-in-out infinite;
+  }
+
+  @keyframes timer-pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.06); }
+  }
 </head>
 <body>
 <div class="page">
@@ -759,8 +795,12 @@
   <!-- SPEECH BUBBLE PANEL -->
   <div class="panel bubble-panel">
     <div class="speech-bubble">
-      <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; Soul Stone <span class="bubble-soul" id="long-status">remaining</span>
+      <span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">Soul Stone remaining</span>
       <div class="complete-msg" id="complete-msg">POWER INFINITE! ALL SIX COLLECTED!</div>
+    </div>
+    <div class="timer-display" id="timer-display" style="display:none;">
+      <span class="timer-label">NEXT STONE IN</span>
+      <span class="timer-digits" id="timer-digits">1:30:00</span>
     </div>
   </div>
 
@@ -982,6 +1022,10 @@
     setTimeout(() => { stone.classList.remove('bursting'); stone.classList.add('done'); }, 650);
     updateUI();
     setTimeout(() => stoneEffect(STONE_COLORS[i]), 150);
+    // Start/reset 90-min timer for Space, Mind, Reality, Power (indices 0-3)
+    if (TIMER_STONES.has(i)) startTimer();
+    // Stop timer after Power (index 3 starts it, Time=4 and Soul don't)
+    // Timer auto-stops at 0 or when next stone is clicked
   }
 
   function stoneEffect(color) {
@@ -1361,15 +1405,115 @@
   function undoLast() {
     if (state.long_done) { state.long_done = false; }
     else if (state.short_count > 0) { state.short_count--; }
+    stopTimer();
     saveState(); buildStones(); updateUI();
   }
+
+  // Next stone labels
+  const NEXT_LABELS = [
+    'Next: Mind Stone',
+    'Next: Reality Stone',
+    'Next: Power Stone',
+    'Next: Time Stone',
+    'Finally: Soul Stone',
+    'collected!'
+  ];
 
   function updateUI() {
     document.getElementById('short-count').textContent = state.short_count;
     document.getElementById('short-done').textContent  = state.short_count;
-    document.getElementById('long-status').textContent = state.long_done ? 'collected!' : 'remaining';
+
+    // Next label
+    const nextEl = document.getElementById('next-label');
+    if (state.long_done) {
+      nextEl.textContent = 'All stones collected!';
+      nextEl.style.color = '#9b30d4';
+    } else if (state.short_count === 0) {
+      nextEl.textContent = 'Soul Stone remaining';
+      nextEl.style.color = '';
+    } else if (state.short_count >= 5) {
+      nextEl.textContent = 'Finally: Soul Stone';
+      nextEl.style.color = '#e86010';
+    } else {
+      nextEl.textContent = NEXT_LABELS[state.short_count - 1];
+      nextEl.style.color = '';
+    }
+
     document.getElementById('complete-msg').classList.toggle('show', state.short_count >= 5 && state.long_done);
     document.getElementById('long-orb').classList.toggle('done', state.long_done);
+  }
+
+  // ===== TIMER =====
+  const TIMER_DURATION = 90 * 60; // 90 minutes in seconds
+  const TIMER_STONES = new Set([0, 1, 2, 3]); // space, mind, reality, power (indices)
+  let timerInterval = null;
+  let timerSeconds = 0;
+
+  function startTimer() {
+    stopTimer();
+    timerSeconds = TIMER_DURATION;
+    document.getElementById('timer-display').style.display = 'flex';
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) {
+        stopTimer();
+        playAlarm();
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    document.getElementById('timer-display').style.display = 'none';
+  }
+
+  function updateTimerDisplay() {
+    const h = Math.floor(timerSeconds / 3600);
+    const m = Math.floor((timerSeconds % 3600) / 60);
+    const s = timerSeconds % 60;
+    const str = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const el = document.getElementById('timer-digits');
+    el.textContent = str;
+    el.classList.toggle('urgent', timerSeconds <= 300); // red + pulse under 5 min
+  }
+
+  // ===== ALARM — Web Audio API beep sequence =====
+  function playAlarm() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const duration = 8; // seconds total
+    const beepPattern = [0, 0.4, 0.8, 1.2, 1.6, 2.2, 2.8, 3.4, 4.0, 5.0, 6.0, 7.0];
+
+    beepPattern.forEach(time => {
+      if (time >= duration) return;
+      // Main tone
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0, ctx.currentTime + time);
+      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + time + 0.02);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + time + 0.22);
+      osc.start(ctx.currentTime + time);
+      osc.stop(ctx.currentTime + time + 0.25);
+      // Harmonic
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.frequency.value = 1320;
+      osc2.type = 'sine';
+      gain2.gain.setValueAtTime(0, ctx.currentTime + time);
+      gain2.gain.linearRampToValueAtTime(0.2, ctx.currentTime + time + 0.02);
+      gain2.gain.linearRampToValueAtTime(0, ctx.currentTime + time + 0.22);
+      osc2.start(ctx.currentTime + time);
+      osc2.stop(ctx.currentTime + time + 0.25);
+    });
+
+    setTimeout(() => ctx.close(), (duration + 1) * 1000);
   }
 
   function renderHistory(logs) {

@@ -1387,6 +1387,7 @@
 
   function clickLong() {
     if (state.long_done) return;
+    if (state.short_count < 5) return; // must complete all 5 first
     state.long_done = true;
     saveState();
     const orb = document.getElementById('long-orb');

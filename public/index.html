@@ -1511,30 +1511,84 @@
   }
 
   // ===== TIMER =====
-  const TIMER_DURATION = 90 * 60; // 90 minutes in seconds
-  const TIMER_STONES = new Set([0, 1, 2, 3]); // space, mind, reality, power (indices)
+  const TIMER_DURATION = 90 * 60 * 1000; // 90 min in ms
+  const TIMER_STONES = new Set([0, 1, 2, 3]);
   let timerInterval = null;
-  let timerSeconds = 0;
 
   function startTimer() {
     stopTimer();
-    timerSeconds = TIMER_DURATION;
-    document.getElementById('timer-display').style.display = 'flex';
-    updateTimerDisplay();
-    timerInterval = setInterval(() => {
-      timerSeconds--;
-      updateTimerDisplay();
-      if (timerSeconds <= 0) {
-        stopTimer();
-        playAlarm();
-        sendPushNotification();
-      }
-    }, 1000);
+    const endTime = Date.now() + TIMER_DURATION;
+    localStorage.setItem('gauntlet_timer_end', endTime);
+    scheduleServerNotify(endTime);
+    showTimer();
+    timerInterval = setInterval(tickTimer, 500);
   }
 
   function stopTimer() {
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    localStorage.removeItem('gauntlet_timer_end');
+    cancelServerNotify();
     document.getElementById('timer-display').style.display = 'none';
+  }
+
+  function showTimer() {
+    document.getElementById('timer-display').style.display = 'flex';
+  }
+
+  function tickTimer() {
+    const endTime = parseInt(localStorage.getItem('gauntlet_timer_end') || '0');
+    if (!endTime) { stopTimer(); return; }
+    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    updateTimerDisplay(remaining);
+    if (remaining <= 0) {
+      stopTimer();
+      playAlarm();
+    }
+  }
+
+  // Resume timer if page was backgrounded
+  function resumeTimerIfActive() {
+    const endTime = parseInt(localStorage.getItem('gauntlet_timer_end') || '0');
+    if (!endTime) return;
+    const remaining = Math.ceil((endTime - Date.now()) / 1000);
+    if (remaining <= 0) {
+      localStorage.removeItem('gauntlet_timer_end');
+      playAlarm(); // fired while backgrounded — alarm on return
+      return;
+    }
+    showTimer();
+    updateTimerDisplay(remaining);
+    if (!timerInterval) timerInterval = setInterval(tickTimer, 500);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') resumeTimerIfActive();
+  });
+
+  // ===== SERVER-SIDE SCHEDULED PUSH =====
+  async function scheduleServerNotify(endTime) {
+    if (!pushSubscription) return;
+    try {
+      await fetch('/api/schedule-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoint: pushSubscription.endpoint,
+          deliverAt: endTime,
+        }),
+      });
+    } catch(e) { console.warn('Schedule notify failed:', e); }
+  }
+
+  async function cancelServerNotify() {
+    if (!pushSubscription) return;
+    try {
+      await fetch('/api/cancel-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: pushSubscription.endpoint }),
+      });
+    } catch(e) {}
   }
 
   // ===== PUSH NOTIFICATIONS =====
@@ -1566,16 +1620,7 @@
     } catch(e) { console.warn('Push setup failed:', e); }
   }
 
-  async function sendPushNotification() {
-    if (!pushSubscription) return;
-    try {
-      await fetch('/api/notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endpoint: pushSubscription.endpoint }),
-      });
-    } catch(e) { console.warn('Push notify failed:', e); }
-  }
+  async function sendPushNotification() {} // legacy stub — server now handles this
 
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -1584,14 +1629,14 @@
     return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
   }
 
-  function updateTimerDisplay() {
-    const h = Math.floor(timerSeconds / 3600);
-    const m = Math.floor((timerSeconds % 3600) / 60);
-    const s = timerSeconds % 60;
+  function updateTimerDisplay(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
     const str = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     const el = document.getElementById('timer-digits');
     el.textContent = str;
-    el.classList.toggle('urgent', timerSeconds <= 300); // red + pulse under 5 min
+    el.classList.toggle('urgent', seconds <= 300);
   }
 
   // ===== ALARM — Web Audio API beep sequence =====
@@ -1653,6 +1698,7 @@
 
   loadAll();
   initPush();
+  resumeTimerIfActive();
 
   // Prevent all scrolling/bouncing
   document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });

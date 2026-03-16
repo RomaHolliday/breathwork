@@ -114,3 +114,48 @@ app.get('/api/vapid-public-key', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Gauntlet running on port ${PORT}`));
+
+// In-memory scheduled notifications (survives until server restart)
+const scheduledNotifs = new Map(); // endpoint -> timeoutId
+
+app.post('/api/schedule-notify', async (req, res) => {
+  const { endpoint, deliverAt } = req.body;
+  if (!endpoint || !deliverAt) return res.status(400).json({ error: 'missing params' });
+
+  // Cancel any existing schedule for this endpoint
+  if (scheduledNotifs.has(endpoint)) {
+    clearTimeout(scheduledNotifs.get(endpoint));
+  }
+
+  const delay = Math.max(0, deliverAt - Date.now());
+
+  const timeoutId = setTimeout(async () => {
+    scheduledNotifs.delete(endpoint);
+    const { data } = await supabase
+      .from('push_subscriptions')
+      .select('subscription')
+      .eq('endpoint', endpoint)
+      .maybeSingle();
+    if (!data) return;
+    const payload = JSON.stringify({
+      title: 'The Gauntlet',
+      body: 'Time for your next stone. ⚡',
+    });
+    try { await webpush.sendNotification(JSON.parse(data.subscription), payload); }
+    catch(e) {
+      await supabase.from('push_subscriptions').delete().eq('endpoint', endpoint);
+    }
+  }, delay);
+
+  scheduledNotifs.set(endpoint, timeoutId);
+  res.json({ ok: true, delayMs: delay });
+});
+
+app.post('/api/cancel-notify', (req, res) => {
+  const { endpoint } = req.body;
+  if (endpoint && scheduledNotifs.has(endpoint)) {
+    clearTimeout(scheduledNotifs.get(endpoint));
+    scheduledNotifs.delete(endpoint);
+  }
+  res.json({ ok: true });
+});

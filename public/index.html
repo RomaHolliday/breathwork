@@ -729,64 +729,7 @@
     pointer-events: none;
   }
 
-  /* ===== TIMER ===== */
-  .timer-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    width: 100%;
-    padding-top: 10px;
-    margin-top: 8px;
-    border-top: 1.5px solid rgba(0,0,0,0.1);
-  }
 
-  .timer-label {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.25em;
-    color: #777;
-    text-transform: uppercase;
-  }
-
-  .timer-digits {
-    font-family: 'Bangers', cursive;
-    font-size: 3.2rem;
-    letter-spacing: 0.08em;
-    color: #f5c800;
-    line-height: 1;
-    text-shadow: 3px 3px 0 #111, 0 0 24px rgba(245,200,0,0.35);
-    transition: color 0.3s;
-  }
-
-  .timer-digits.urgent {
-    color: #cc1a1a;
-    text-shadow: 3px 3px 0 #111, 0 0 24px rgba(204,26,26,0.5);
-    animation: timer-pulse 0.8s ease-in-out infinite;
-  }
-
-  @keyframes timer-pulse {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.06); }
-  }
-
-  .cancel-timer-btn {
-    margin-top: 8px;
-    background: #111;
-    border: none;
-    color: #555;
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.52rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 7px 18px;
-    border-radius: 4px;
-    cursor: pointer;
-    touch-action: manipulation;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cancel-timer-btn:active { background: #222; color: #999; transform: scale(0.95); }
 </style>
 </head>
 <body>
@@ -848,11 +791,6 @@
   <div class="panel bubble-panel">
     <div class="speech-bubble">
       <div class="bubble-status"><span class="bubble-count" id="short-done">0</span> of 5 stones &bull; <span class="bubble-soul" id="next-label">I Am Inevitable.</span></div>
-      <div class="timer-display" id="timer-display" style="display:none;">
-        <span class="timer-label">Next stone in</span>
-        <span class="timer-digits" id="timer-digits">1:30:00</span>
-        <button class="cancel-timer-btn" onclick="stopTimer()">✕ Cancel timer</button>
-      </div>
       <div class="complete-msg" id="complete-msg">What did it cost?<br><span style="color:#e86010">Everything.</span></div>
     </div>
   </div>
@@ -1075,10 +1013,6 @@
     setTimeout(() => { stone.classList.remove('bursting'); stone.classList.add('done'); }, 650);
     updateUI();
     setTimeout(() => stoneEffect(STONE_COLORS[i]), 150);
-    // Start/reset 90-min timer for Space, Mind, Reality, Power (indices 0-3)
-    if (TIMER_STONES.has(i)) startTimer();
-    // Stop timer after Power (index 3 starts it, Time=4 and Soul don't)
-    // Timer auto-stops at 0 or when next stone is clicked
   }
 
   function stoneEffect(color) {
@@ -1459,7 +1393,6 @@
   function undoLast() {
     if (state.long_done) { state.long_done = false; }
     else if (state.short_count > 0) { state.short_count--; }
-    stopTimer();
     saveState(); buildStones(); updateUI();
   }
 
@@ -1510,172 +1443,6 @@
     if (gauntlet) gauntlet.classList.toggle('complete', state.short_count >= 5 && state.long_done);
   }
 
-  // ===== TIMER =====
-  const TIMER_DURATION = 90 * 60 * 1000; // 90 min in ms
-  const TIMER_STONES = new Set([0, 1, 2, 3]);
-  let timerInterval = null;
-
-  function startTimer() {
-    stopTimer();
-    const endTime = Date.now() + TIMER_DURATION;
-    localStorage.setItem('gauntlet_timer_end', endTime);
-    scheduleServerNotify(endTime);
-    showTimer();
-    timerInterval = setInterval(tickTimer, 500);
-  }
-
-  function stopTimer() {
-    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-    localStorage.removeItem('gauntlet_timer_end');
-    cancelServerNotify();
-    document.getElementById('timer-display').style.display = 'none';
-  }
-
-  function showTimer() {
-    document.getElementById('timer-display').style.display = 'flex';
-  }
-
-  function tickTimer() {
-    const endTime = parseInt(localStorage.getItem('gauntlet_timer_end') || '0');
-    if (!endTime) { stopTimer(); return; }
-    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
-    updateTimerDisplay(remaining);
-    if (remaining <= 0) {
-      stopTimer();
-      playAlarm();
-    }
-  }
-
-  // Resume timer if page was backgrounded
-  function resumeTimerIfActive() {
-    const endTime = parseInt(localStorage.getItem('gauntlet_timer_end') || '0');
-    if (!endTime) return;
-    const remaining = Math.ceil((endTime - Date.now()) / 1000);
-    if (remaining <= 0) {
-      localStorage.removeItem('gauntlet_timer_end');
-      playAlarm(); // fired while backgrounded — alarm on return
-      return;
-    }
-    showTimer();
-    updateTimerDisplay(remaining);
-    if (!timerInterval) timerInterval = setInterval(tickTimer, 500);
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') resumeTimerIfActive();
-  });
-
-  // ===== SERVER-SIDE SCHEDULED PUSH =====
-  async function scheduleServerNotify(endTime) {
-    if (!pushSubscription) return;
-    try {
-      await fetch('/api/schedule-notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          endpoint: pushSubscription.endpoint,
-          deliverAt: endTime,
-        }),
-      });
-    } catch(e) { console.warn('Schedule notify failed:', e); }
-  }
-
-  async function cancelServerNotify() {
-    if (!pushSubscription) return;
-    try {
-      await fetch('/api/cancel-notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endpoint: pushSubscription.endpoint }),
-      });
-    } catch(e) {}
-  }
-
-  // ===== PUSH NOTIFICATIONS =====
-  let pushSubscription = null;
-
-  async function initPush() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-    try {
-      const reg = await navigator.serviceWorker.register('/sw.js');
-      const keyRes = await fetch('/api/vapid-public-key');
-      const { key } = await keyRes.json();
-
-      const existing = await reg.pushManager.getSubscription();
-      if (existing) { pushSubscription = existing; return; }
-
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') return;
-
-      pushSubscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(key),
-      });
-
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscription: pushSubscription }),
-      });
-    } catch(e) { console.warn('Push setup failed:', e); }
-  }
-
-  async function sendPushNotification() {} // legacy stub — server now handles this
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const raw = atob(base64);
-    return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
-  }
-
-  function updateTimerDisplay(seconds) {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    const str = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    const el = document.getElementById('timer-digits');
-    el.textContent = str;
-    el.classList.toggle('urgent', seconds <= 300);
-  }
-
-  // ===== ALARM — Web Audio API beep sequence =====
-  function playAlarm() {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const duration = 8; // seconds total
-    const beepPattern = [0, 0.4, 0.8, 1.2, 1.6, 2.2, 2.8, 3.4, 4.0, 5.0, 6.0, 7.0];
-
-    beepPattern.forEach(time => {
-      if (time >= duration) return;
-      // Main tone
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0, ctx.currentTime + time);
-      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + time + 0.02);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + time + 0.22);
-      osc.start(ctx.currentTime + time);
-      osc.stop(ctx.currentTime + time + 0.25);
-      // Harmonic
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.connect(gain2); gain2.connect(ctx.destination);
-      osc2.frequency.value = 1320;
-      osc2.type = 'sine';
-      gain2.gain.setValueAtTime(0, ctx.currentTime + time);
-      gain2.gain.linearRampToValueAtTime(0.2, ctx.currentTime + time + 0.02);
-      gain2.gain.linearRampToValueAtTime(0, ctx.currentTime + time + 0.22);
-      osc2.start(ctx.currentTime + time);
-      osc2.stop(ctx.currentTime + time + 0.25);
-    });
-
-    setTimeout(() => ctx.close(), (duration + 1) * 1000);
-  }
-
   function renderHistory(logs) {
     const list = document.getElementById('history-list');
     if (!logs || logs.length === 0) {
@@ -1697,8 +1464,6 @@
   }
 
   loadAll();
-  initPush();
-  resumeTimerIfActive();
 
   // Prevent all scrolling/bouncing
   document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });

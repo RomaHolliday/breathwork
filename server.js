@@ -1,6 +1,5 @@
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
-const webpush = require('web-push');
 const path = require('path');
 
 const app = express();
@@ -10,12 +9,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
-);
-
-webpush.setVapidDetails(
-  'mailto:admin@gauntlet.app',
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
 );
 
 // Get all logs
@@ -60,102 +53,5 @@ app.post('/api/logs', async (req, res) => {
   res.json(data);
 });
 
-// Save push subscription
-app.post('/api/subscribe', async (req, res) => {
-  const { subscription } = req.body;
-  if (!subscription) return res.status(400).json({ error: 'subscription required' });
-
-  const { error } = await supabase
-    .from('push_subscriptions')
-    .upsert({ endpoint: subscription.endpoint, subscription: JSON.stringify(subscription) },
-             { onConflict: 'endpoint' });
-
-  if (error) return res.status(500).json({ error: error.message });
-  res.json({ ok: true });
-});
-
-// Send push notification
-app.post('/api/notify', async (req, res) => {
-  const { endpoint } = req.body;
-
-  let query = supabase.from('push_subscriptions').select('subscription');
-  if (endpoint) query = query.eq('endpoint', endpoint);
-
-  const { data, error } = await query;
-  if (error) return res.status(500).json({ error: error.message });
-
-  const payload = JSON.stringify({
-    title: 'The Gauntlet',
-    body: 'Time for your next stone. ⚡',
-  });
-
-  const results = await Promise.allSettled(
-    data.map(row => webpush.sendNotification(JSON.parse(row.subscription), payload))
-  );
-
-  // Clean up expired subscriptions
-  const expired = results
-    .map((r, i) => r.status === 'rejected' ? data[i] : null)
-    .filter(Boolean);
-
-  if (expired.length) {
-    await supabase.from('push_subscriptions')
-      .delete()
-      .in('endpoint', expired.map(r => JSON.parse(r.subscription).endpoint));
-  }
-
-  res.json({ sent: results.filter(r => r.status === 'fulfilled').length });
-});
-
-// VAPID public key for client
-app.get('/api/vapid-public-key', (req, res) => {
-  res.json({ key: process.env.VAPID_PUBLIC_KEY });
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Gauntlet running on port ${PORT}`));
-
-// In-memory scheduled notifications (survives until server restart)
-const scheduledNotifs = new Map(); // endpoint -> timeoutId
-
-app.post('/api/schedule-notify', async (req, res) => {
-  const { endpoint, deliverAt } = req.body;
-  if (!endpoint || !deliverAt) return res.status(400).json({ error: 'missing params' });
-
-  // Cancel any existing schedule for this endpoint
-  if (scheduledNotifs.has(endpoint)) {
-    clearTimeout(scheduledNotifs.get(endpoint));
-  }
-
-  const delay = Math.max(0, deliverAt - Date.now());
-
-  const timeoutId = setTimeout(async () => {
-    scheduledNotifs.delete(endpoint);
-    const { data } = await supabase
-      .from('push_subscriptions')
-      .select('subscription')
-      .eq('endpoint', endpoint)
-      .maybeSingle();
-    if (!data) return;
-    const payload = JSON.stringify({
-      title: 'The Gauntlet',
-      body: 'Time for your next stone. ⚡',
-    });
-    try { await webpush.sendNotification(JSON.parse(data.subscription), payload); }
-    catch(e) {
-      await supabase.from('push_subscriptions').delete().eq('endpoint', endpoint);
-    }
-  }, delay);
-
-  scheduledNotifs.set(endpoint, timeoutId);
-  res.json({ ok: true, delayMs: delay });
-});
-
-app.post('/api/cancel-notify', (req, res) => {
-  const { endpoint } = req.body;
-  if (endpoint && scheduledNotifs.has(endpoint)) {
-    clearTimeout(scheduledNotifs.get(endpoint));
-    scheduledNotifs.delete(endpoint);
-  }
-  res.json({ ok: true });
-});
